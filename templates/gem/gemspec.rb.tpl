@@ -1,0 +1,55 @@
+<% path = name.gsub('-', '/')
+   files = ['CHANGELOG.md', 'LICENSE', 'README.md', "#{name}.gemspec", 'lib/**/*', *gemspec.fetch('files', [])]
+-%>
+# frozen_string_literal: true
+
+# this file is synced from dry-rb/template-gem project
+
+lib = File.expand_path("lib", __dir__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require "<%= path %>/version"
+
+Gem::Specification.new do |spec|
+  spec.name          = "<%= name %>"
+  spec.authors       = <%= gemspec['authors'].inspect %>
+  spec.email         = <%= gemspec['email'].inspect %>
+  spec.license       = "MIT"
+  spec.version       = <%= inflector.camelize(path) %>::VERSION.dup
+
+  spec.summary       = <%= gemspec["summary"].inspect %><%
+  if gemspec.key?('description')
+    if gemspec['description'].lines.size > 1
+      description = gemspec['description'].strip.split("\n").map { |l| "    #{l}\n" }.join
+    %>
+  spec.description   = <<~TEXT
+<%= description %>
+  TEXT<%
+    else %>
+  spec.description   = <%= gemspec['description'].inspect %><%
+    end
+  else %>
+  spec.description   = spec.summary<%
+  end %>
+  spec.homepage      = "https://dry-rb.org/gems/<%= name %>"
+  spec.files         = Dir<%= files.inspect %>
+  spec.bindir        = "bin"
+  spec.executables   = <%= Array(gemspec['executables']) %>
+  spec.require_paths = ["lib"]
+
+  spec.metadata["allowed_push_host"] = "https://rubygems.org"
+  spec.metadata["changelog_uri"]     = "https://github.com/dry-rb/<%= name %>/blob/main/CHANGELOG.md"
+  spec.metadata["source_code_uri"]   = "https://github.com/dry-rb/<%= name %>"
+  spec.metadata["bug_tracker_uri"]   = "https://github.com/dry-rb/<%= name %>/issues"
+  spec.metadata["funding_uri"]       = "https://github.com/sponsors/hanami"
+
+  spec.required_ruby_version = <%= gemspec.fetch('required_ruby_version', '>= 3.1').inspect %>
+
+  # to update dependencies edit project.yml
+  <% gemspec.fetch('runtime_dependencies', []).sort_by { |name, *| name }.each do |dep| -%>
+  spec.add_runtime_dependency <%= Array(dep).map(&:inspect).join(', ') %>
+  <% end %>
+
+  <% gemspec.fetch('development_dependencies', []).sort_by { |name, *| name }.each do |dep| -%>
+  spec.add_development_dependency <%= Array(dep).map(&:inspect).join(', ') %>
+  <% end %>
+end

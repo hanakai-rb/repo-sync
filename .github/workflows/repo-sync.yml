@@ -1,0 +1,37 @@
+name: Sync repos
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  repo_sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Sync
+        uses: ./repo-sync-action
+        with:
+          # TODO: run template tool over the target file names
+          # templates/gem/gemspec.rb.tpl={{ .name }}.gemspec
+          REPOSITORIES: |
+            hanakai-rb/hanami-view
+          FILES: |
+            templates/gem/.github/ISSUE_TEMPLATE=.github/ISSUE_TEMPLATE.md
+            templates/gem/.github/workflows/ci.yml.tpl=.github/workflows/ci.yml
+            templates/gem/.github/workflows/rubocop.yml=.github/workflows/rubocop.yml
+            templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
+            templates/gem/.github/SUPPORT.md=.github/SUPPORT.md
+            templates/gem/spec/support/coverage.rb=spec/support/coverage.rb
+            templates/gem/spec/support/rspec.rb=spec/support/rspec.rb
+            templates/gem/spec/support/warnings.rb=spec/support/warnings.rb
+            templates/gem/.rspec=.rspec
+            templates/gem/.rubocop.yml=.rubocop.yml
+            templates/gem/CODE_OF_CONDUCT.md=CODE_OF_CONDUCT.md
+            templates/gem/CONTRIBUTING.md=CONTRIBUTING.md
+            templates/gem/Gemfile.devtools=Gemfile.devtools
+            templates/gem/LICENSE.tpl=LICENSE
+            templates/gem/README.md.tpl=README.md
+          TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
