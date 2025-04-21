@@ -17,6 +17,7 @@ RUN curl -fsSL https://github.com/bluebrown/go-template-cli/releases/download/v0
 
 COPY error-matcher.json /error-matcher.json
 
+COPY functions.sh /functions.sh
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod 777 entrypoint.sh
