@@ -1,4 +1,4 @@
-name: Sync repos
+name: Repo sync
 
 on:
   push:
