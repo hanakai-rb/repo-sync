@@ -73,6 +73,7 @@ for repository in "${REPOSITORIES[@]}"; do
     done
 
     git commit -m "$(echo -e "$commit_msg")" > /dev/null 2>&1
+    COMMIT_HASH=$(git rev-parse HEAD)
 
     echo "🚀 Pushing to ${REPO_URL} (${BRANCH_NAME})"
     git push $REPO_URL > /dev/null 2>&1
@@ -82,7 +83,7 @@ for repository in "${REPOSITORIES[@]}"; do
       echo "- $file"
     done
 
-    echo "❇️ **${repository}** (${#changed_files[@]} files)" >> $GITHUB_STEP_SUMMARY
+    echo "❇️ **${repository}** (${#changed_files[@]} files in [${COMMIT_HASH:0:7}](https://github.com/${REPO_NAME}/commit/${COMMIT_HASH}))" >> $GITHUB_STEP_SUMMARY
     for file in "${changed_files[@]}"; do
       echo "- \`$file\`" >> $GITHUB_STEP_SUMMARY
     done
