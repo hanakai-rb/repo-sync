@@ -1,9 +1,9 @@
 <!--- This file is synced from hanakai-rb/repo-sync -->
 
-[rubygem]: https://rubygems.org/gems/{{ .name }}
-[actions]: https://github.com/{{ .github_org }}/{{ .name }}/actions
+[rubygem]: https://rubygems.org/gems/{{ .name.gem }}
+[actions]: https://github.com/{{ .github_org }}/{{ .name.gem }}/actions
 
-# <%= name %> [![Gem Version](https://badge.fury.io/rb/{{ .name }}.svg)][rubygem] [![CI Status](https://github.com/{{ .github_org }}/{{ .name }}/workflows/CI/badge.svg)][actions]
+# <%= name %> [![Gem Version](https://badge.fury.io/rb/{{ .name.gem }}.svg)][rubygem] [![CI Status](https://github.com/{{ .github_org }}/{{ .name.gem }}/workflows/CI/badge.svg)][actions]
 
 {{ if eq .github_org "dry-rb" -}}
 ## Links

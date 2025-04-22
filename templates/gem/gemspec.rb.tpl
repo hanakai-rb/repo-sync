@@ -1,55 +1,51 @@
-<% path = name.gsub('-', '/')
-   files = ['CHANGELOG.md', 'LICENSE', 'README.md', "#{name}.gemspec", 'lib/**/*', *gemspec.fetch('files', [])]
--%>
+{{ $gem_path := .name.gem | replace "-" "/" -}}
+{{ $file_globs := list "CHANGELOG.md" "LICENSE" "README.md" (printf "%s.gemspec" .name.gem) "lib/**/*" -}}
+
 # frozen_string_literal: true
 
-# this file is synced from dry-rb/template-gem project
+# This file is synced from hanakai-rb/repo-sync. To update it, edit repo-sync.yml.
 
 lib = File.expand_path("lib", __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "<%= path %>/version"
+require "{{ $gem_path }}/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "<%= name %>"
-  spec.authors       = <%= gemspec['authors'].inspect %>
-  spec.email         = <%= gemspec['email'].inspect %>
+  spec.name          = "{{ .name.gem }}"
+  spec.authors       = ["{{ join "\", \"" .gemspec.authors }}"]
+  spec.email         = ["{{ join "\", \"" .gemspec.email }}"]
   spec.license       = "MIT"
-  spec.version       = <%= inflector.camelize(path) %>::VERSION.dup
+  spec.version       = {{ .name.constant }}::VERSION.dup
 
-  spec.summary       = <%= gemspec["summary"].inspect %><%
-  if gemspec.key?('description')
-    if gemspec['description'].lines.size > 1
-      description = gemspec['description'].strip.split("\n").map { |l| "    #{l}\n" }.join
-    %>
-  spec.description   = <<~TEXT
-<%= description %>
-  TEXT<%
-    else %>
-  spec.description   = <%= gemspec['description'].inspect %><%
-    end
-  else %>
-  spec.description   = spec.summary<%
-  end %>
-  spec.homepage      = "https://dry-rb.org/gems/<%= name %>"
-  spec.files         = Dir<%= files.inspect %>
+  spec.summary = "{{ .gemspec.summary }}"
+  {{ if .gemspec.description -}}
+    spec.description = "{{ .gemspec.description }}"
+  {{ else -}}
+    spec.description = spec.summary
+  {{ end -}}
+  spec.homepage      = "https://dry-rb.org/gems/{{ .name.gem }}"
+  spec.files         = Dir["{{ join "\", \"" $file_globs }}"]
   spec.bindir        = "bin"
-  spec.executables   = <%= Array(gemspec['executables']) %>
+  {{ if eq (len (default (list) .gemspec.executables)) 0 -}}
+  spec.executables   = []
+  {{ else -}}
+  spec.executables   = ["{{ join "\", \"" .gemspec.executables }}"]
+  {{ end -}}
   spec.require_paths = ["lib"]
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
-  spec.metadata["changelog_uri"]     = "https://github.com/dry-rb/<%= name %>/blob/main/CHANGELOG.md"
-  spec.metadata["source_code_uri"]   = "https://github.com/dry-rb/<%= name %>"
-  spec.metadata["bug_tracker_uri"]   = "https://github.com/dry-rb/<%= name %>/issues"
+  spec.metadata["changelog_uri"]     = "https://github.com/dry-rb/{{ .name.gem }}/blob/main/CHANGELOG.md"
+  spec.metadata["source_code_uri"]   = "https://github.com/dry-rb/{{ .name.gem }}"
+  spec.metadata["bug_tracker_uri"]   = "https://github.com/dry-rb/{{ .name.gem }}/issues"
   spec.metadata["funding_uri"]       = "https://github.com/sponsors/hanami"
 
-  spec.required_ruby_version = <%= gemspec.fetch('required_ruby_version', '>= 3.1').inspect %>
+  spec.required_ruby_version = "{{ default "3.1" .gemspec.required_ruby_version }}"
 
-  # to update dependencies edit project.yml
-  <% gemspec.fetch('runtime_dependencies', []).sort_by { |name, *| name }.each do |dep| -%>
-  spec.add_runtime_dependency <%= Array(dep).map(&:inspect).join(', ') %>
-  <% end %>
+  {{ range default (list) .gemspec.runtime_dependencies -}}
+  spec.add_runtime_dependency "{{ join "\", \"" . }}"
+  {{ end -}}
 
-  <% gemspec.fetch('development_dependencies', []).sort_by { |name, *| name }.each do |dep| -%>
-  spec.add_development_dependency <%= Array(dep).map(&:inspect).join(', ') %>
-  <% end %>
+  {{ range default (list) .gemspec.development_dependencies -}}
+  {{ $dependency := (kindIs "slice" .) | ternary . (list .) -}}
+  spec.add_development_dependency "{{ join "\", \"" $dependency }}"
+  {{ end -}}
 end
