@@ -95,7 +95,7 @@ generate_target_file() {
 
   # If the file is not a template, copy it verbatim
   if [[ ! "$SOURCE_FULL_PATH" =~ \.tpl$ ]]; then
-    cp "${SOURCE_FULL_PATH}" "${DEST_FULL_PATH}" -r
+    cp -r "${SOURCE_FULL_PATH}" "${DEST_FULL_PATH}"
     return
   fi
 
