@@ -1,27 +1,50 @@
 #!/bin/bash
 
-# Usage: bin/local-sync path/to/local/target/repo
+# Usage: bin/local-sync [--rebuild] path/to/repo
 
 set -e
 
 REPO_SYNC_ROOT=$(pwd)
 DOCKER_IMAGE="repo-sync-local"
 DOCKER_DIR="${REPO_SYNC_ROOT}/local-sync"
+DOCKER_REBUILD=false
 
-if [ $# -lt 1 ]; then
-  echo "Usage: $0 path/to/repo"
-  echo "  path/to/repo: Path to a local repository for testing a sync"
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --rebuild)
+      DOCKER_REBUILD=true
+      shift
+      ;;
+    *)
+      # If not a flag, assume it's the target repo path
+      if [ -z "${TARGET_REPO_DIR+x}" ]; then
+        TARGET_REPO_DIR=$(realpath "$1")
+      else
+        echo "Error: Unexpected argument: $1"
+        echo "Usage: $0 [--rebuild] path/to/repo"
+        exit 1
+      fi
+      shift
+      ;;
+  esac
+done
+
+if [ -z "${TARGET_REPO_DIR+x}" ]; then
+  echo "Error: No target repository specified"
+  echo "Usage: $0 [--rebuild] path/to/repo"
   exit 1
 fi
-
-TARGET_REPO_DIR=$(realpath "$1")
 
 if [ ! -d "$TARGET_REPO_DIR" ]; then
-  echo "Error: Repository directory does not exist: $TARGET_REPO_DIR"
+  echo "Error: Target repository directory does not exist: $TARGET_REPO_DIR"
   exit 1
 fi
 
-docker build -q -t "${DOCKER_IMAGE}" "${DOCKER_DIR}" > /dev/null
+if [ "$DOCKER_REBUILD" = true ] || ! docker image inspect "${DOCKER_IMAGE}" >/dev/null 2>&1; then
+  echo "Building Docker image..."
+  docker build -q -t "${DOCKER_IMAGE}" "${DOCKER_DIR}" >/dev/null
+fi
 
 docker run --rm \
   -v "${REPO_SYNC_ROOT}:/workspace" \
