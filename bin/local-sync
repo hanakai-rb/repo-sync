@@ -8,6 +8,7 @@ REPO_SYNC_ROOT=$(pwd)
 DOCKER_IMAGE="repo-sync-local"
 DOCKER_DIR="${REPO_SYNC_ROOT}/local-sync"
 DOCKER_REBUILD=false
+DOCKER_SHELL=false
 REPO_SYNC_SCHEMA_PATH="${REPO_SYNC_ROOT}/templates/repo-sync-schema.json"
 
 # Parse arguments
@@ -20,6 +21,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --rebuild)
       DOCKER_REBUILD=true
+      shift
+      ;;
+    --shell)
+      DOCKER_SHELL=true
       shift
       ;;
     *)
@@ -65,11 +70,18 @@ fi
 
 REPO_NAME=$(basename "$TARGET_REPO_DIR")
 
-docker run --rm \
-  -v "${REPO_SYNC_ROOT}:/workspace" \
-  -e REPO_SYNC_SCHEMA_PATH="/workspace/${REPO_SYNC_SCHEMA_PATH}" \
-  -v "${TARGET_REPO_DIR}:/repos/${REPO_NAME}" \
-  "${DOCKER_IMAGE}" "/repos/${REPO_NAME}"
+DOCKER_ARGS=(
+  "--rm"
+  "-v" "${REPO_SYNC_ROOT}:/workspace"
+  "-e" "REPO_SYNC_SCHEMA_PATH=/workspace/${REPO_SYNC_SCHEMA_PATH}"
+  "-v" "${TARGET_REPO_DIR}:/repos/${REPO_NAME}"
+)
+
+if [[ "$DOCKER_SHELL" == "true" ]]; then
+  docker run "${DOCKER_ARGS[@]}" -it --entrypoint /bin/bash "${DOCKER_IMAGE}"
+else
+  docker run "${DOCKER_ARGS[@]}" "${DOCKER_IMAGE}" "/repos/${REPO_NAME}"
+fi
 
 if ! (cd "$TARGET_REPO_DIR" && git diff --quiet && git diff --staged --quiet); then
   echo "Changes:"
