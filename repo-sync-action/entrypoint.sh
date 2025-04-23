@@ -12,6 +12,7 @@ echo "::add-matcher::$HOME/file-sync-error-matcher.json"
 # Prepare inputs
 REPOSITORIES=($INPUT_REPOSITORIES)
 mapfile -t FILES < <(echo "$INPUT_FILES" | grep -v '^$')
+REPO_SYNC_SCHEMA_PATH="${GITHUB_WORKSPACE}/${INPUT_REPO_SYNC_SCHEMA_PATH}"
 GIT_EMAIL="$INPUT_GIT_EMAIL"
 GIT_USERNAME="$INPUT_GIT_USERNAME"
 GITHUB_TOKEN="$INPUT_TOKEN"
@@ -49,6 +50,29 @@ for repository in "${REPOSITORIES[@]}"; do
 
   echo " "
 
+  # Validate repo-sync.yml and handle failures
+  validation_result=$(validate_repo_sync_yml "$REPO_PATH" "$REPO_SYNC_SCHEMA_PATH" 2>&1)
+  validation_status=$?
+  if [[ $validation_status -ne 0 ]]; then
+    # Output to log
+    echo "ERROR: Invalid repo-sync.yml:"
+    echo "$validation_result" | sed 's/^/  /' # Indent for clarity
+
+    # Output to step summary
+    echo "⛔ **${repository}** (Invalid repo-sync.yml)" >> $GITHUB_STEP_SUMMARY
+    echo "" >> $GITHUB_STEP_SUMMARY
+    echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+    echo "$validation_result" >> $GITHUB_STEP_SUMMARY
+    echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+    echo "" >> $GITHUB_STEP_SUMMARY
+
+    cd $REPOS_PATH
+    rm -rf $REPO_NAME
+    echo "::endgroup::"
+    continue
+  fi
+
+  # Sync files
   changed_files=()
   for file in "${FILES[@]}"; do
     synced_path=$(sync_file "$file" "$GITHUB_WORKSPACE" "$REPO_PATH")

@@ -11,6 +11,9 @@ inputs:
   FILES:
     description: "Files to sync to repositories"
     required: true
+  REPO_SYNC_SCHEMA_PATH:
+    description: "Path to the JSON schema file for repo-sync.yml validation"
+    required: true
   TOKEN:
     description: "Personal access token with Repo privileges"
     required: true

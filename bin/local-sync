@@ -8,10 +8,16 @@ REPO_SYNC_ROOT=$(pwd)
 DOCKER_IMAGE="repo-sync-local"
 DOCKER_DIR="${REPO_SYNC_ROOT}/local-sync"
 DOCKER_REBUILD=false
+REPO_SYNC_SCHEMA_PATH="${REPO_SYNC_ROOT}/templates/repo-sync-schema.json"
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --schema)
+      shift
+      REPO_SYNC_SCHEMA_PATH="$1"
+      shift
+      ;;
     --rebuild)
       DOCKER_REBUILD=true
       shift
@@ -22,7 +28,7 @@ while [[ $# -gt 0 ]]; do
         TARGET_REPO_DIR=$(realpath "$1")
       else
         echo "Error: Unexpected argument: $1"
-        echo "Usage: $0 [--rebuild] path/to/repo"
+        echo "Usage: $0 [--rebuild] --schema path/to/schema.json path/to/repo"
         exit 1
       fi
       shift
@@ -30,9 +36,20 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [ -z "${REPO_SYNC_SCHEMA_PATH+x}" ]; then
+  echo "Error: No schema specified"
+  echo "Usage: $0 [--rebuild] --schema path/to/schema.json path/to/repo"
+  exit 1
+fi
+
+if [ ! -f "$REPO_SYNC_SCHEMA_PATH" ]; then
+  echo "Error: repo-sync schema file not found: $REPO_SYNC_SCHEMA_PATH"
+  exit 1
+fi
+
 if [ -z "${TARGET_REPO_DIR+x}" ]; then
   echo "Error: No target repository specified"
-  echo "Usage: $0 [--rebuild] path/to/repo"
+  echo "Usage: $0 [--rebuild] --schema path/to/schema.json path/to/repo"
   exit 1
 fi
 
@@ -46,10 +63,13 @@ if [ "$DOCKER_REBUILD" = true ] || ! docker image inspect "${DOCKER_IMAGE}" >/de
   docker build -q -t "${DOCKER_IMAGE}" "${DOCKER_DIR}" >/dev/null
 fi
 
+REPO_NAME=$(basename "$TARGET_REPO_DIR")
+
 docker run --rm \
   -v "${REPO_SYNC_ROOT}:/workspace" \
-  -v "${TARGET_REPO_DIR}:/target" \
-  "${DOCKER_IMAGE}" "/target"
+  -e REPO_SYNC_SCHEMA_PATH="/workspace/${REPO_SYNC_SCHEMA_PATH}" \
+  -v "${TARGET_REPO_DIR}:/repos/${REPO_NAME}" \
+  "${DOCKER_IMAGE}" "/repos/${REPO_NAME}"
 
 if ! (cd "$TARGET_REPO_DIR" && git diff --quiet && git diff --staged --quiet); then
   echo "Changes:"

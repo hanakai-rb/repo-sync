@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["name", "github_org"],
+  "properties": {
+    "name": {
+      "type": "object",
+      "required": ["gem", "constant"],
+      "properties": {
+        "gem": {
+          "type": "string",
+          "description": "The gem name"
+        },
+        "constant": {
+          "type": "string",
+          "description": "The Ruby constant name"
+        }
+      }
+    },
+    "github_org": {
+      "type": "string",
+      "description": "GitHub organization name"
+    },
+    "gemspec": {
+      "type": "object",
+      "properties": {
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of authors"
+        },
+        "email": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "email"
+          },
+          "description": "List of email addresses"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Gem summary"
+        },
+        "development_dependencies": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "type": "string" },
+              {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            ]
+          },
+          "description": "Development dependencies"
+        },
+        "runtime_dependencies": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              { "type": "string" },
+              {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            ]
+          },
+          "description": "Runtime dependencies"
+        }
+      }
+    }
+  }
+}

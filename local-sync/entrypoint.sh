@@ -10,10 +10,19 @@ WORKFLOW_FILE="${SOURCE_DIR}/.github/workflows/repo-sync.yml"
 
 source "${SOURCE_DIR}/repo-sync-action/functions.sh"
 
-# Extract file paths using yq
-FILES=$(yq eval '.jobs.repo_sync.steps[] | select(.name=="Sync") | .with.FILES' "$WORKFLOW_FILE")
+# Validate repo-sync.yml
+set +e
+validation_result=$(validate_repo_sync_yml "$TARGET_DIR" "$REPO_SYNC_SCHEMA_PATH" 2>&1)
+validation_status=$?
+set -e
+if [[ $validation_status -ne 0 ]]; then
+  echo "ERROR: Invalid repo-sync.yml:"
+  echo "$validation_result" | sed 's/^/  /' # Indent for clarity
+  exit 1
+fi
 
-# Process each file mapping silently
+# Sync files
+FILES=$(yq eval '.jobs.repo_sync.steps[] | select(.name=="Sync") | .with.FILES' "$WORKFLOW_FILE")
 while IFS= read -r file_mapping; do
   if [ -n "$file_mapping" ]; then
     sync_file "$file_mapping" "$SOURCE_DIR" "$TARGET_DIR" > /dev/null

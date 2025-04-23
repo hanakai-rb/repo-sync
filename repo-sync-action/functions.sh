@@ -1,5 +1,42 @@
 #!/bin/bash
 
+validate_repo_sync_yml() {
+  local REPO_PATH="$1"
+  local SCHEMA_PATH="$2"
+
+  local REPO_SYNC_YML="${REPO_PATH}/repo-sync.yml"
+
+  if [[ -z "$SCHEMA_PATH" ]]; then
+    echo "ERROR: No schema path provided for validation"
+    return 1
+  fi
+  if [[ ! -f "$SCHEMA_PATH" ]]; then
+    echo "ERROR: Schema file not found at $SCHEMA_PATH"
+    return 1
+  fi
+  if [[ ! -f "$REPO_SYNC_YML" ]]; then
+    echo "ERROR: repo-sync.yml not found at $REPO_SYNC_YML"
+    return 1
+  fi
+
+  # Validate against schema
+  #
+  # Jump into the repo dir before running yajsv so we can avoid it printing a
+  # full path to repo-sync.yml in any error output.
+  pushd "$(dirname "$REPO_SYNC_YML")" > /dev/null
+  VALIDATION_OUTPUT=$(yajsv -s "$SCHEMA_PATH" repo-sync.yml 2>&1)
+  EXIT_CODE=$?
+  popd > /dev/null
+
+  if [[ $EXIT_CODE -ne 0 ]]; then
+    # Double quotes here are necessary to preserve newlines from the output
+    echo "$VALIDATION_OUTPUT" | sed 's/^repo-sync\.yml: fail: //g'
+    return 1
+  fi
+
+  return 0
+}
+
 # Get fully processed source and destination paths for a file
 sync_file() {
   local FILE_MAPPING="$1"

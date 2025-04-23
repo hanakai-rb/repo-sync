@@ -34,4 +34,5 @@ jobs:
             templates/gem/spec/support/coverage.rb=spec/support/coverage.rb
             templates/gem/spec/support/rspec.rb=spec/support/rspec.rb
             templates/gem/spec/support/warnings.rb=spec/support/warnings.rb
+          REPO_SYNC_SCHEMA_PATH: templates/repo-sync-schema.json
           TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
