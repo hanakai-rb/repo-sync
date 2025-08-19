@@ -6,7 +6,7 @@ A GitHub Action and supporting tooling for synchronizing files across Hanakai re
 
 ## How does it work?
 
-Inside [.github/workflows/repo-sync.yml](.github/workflows/repo-sync.yml) in this repo, we define a repo sync job, which contains a list of repositories and the files to sync within them. See this (shortened) example:
+In [`.github/workflows/repo-sync.yml`](.github/workflows/repo-sync.yml) in this repo, we define a job that configures a list of repositories and files to be synced across each. For example:
 
 ```yaml
 repo_sync:
@@ -30,12 +30,13 @@ repo_sync:
 
 When this action runs, it will:
 
-- Check out each repository in `REPOSITORIES`.
-- Validate the repository's `repo-sync.yml` against the JSON schema at `REPO_SYNC_SCHEMA_PATH`.
-- For each entry in `FILES` (in `source=dest` format), copy the source file to the destination path within the repository.
-- If the source file has a `.tpl` extension, evaluate the the source file as a Go [text/template](https://pkg.go.dev/text/template) file using the [`tpl` CLI tool](https://github.com/bluebrown/go-template-cli). The values from `repo-sync.yml` are available within the template.
-- Destination filenames themselves also support text/template syntax.
-- Commit and push the changes directly to each repo's main branch.
+1. Check out each repository.
+2. Validate the repository's `repo-sync.yml` against the configured JSON schema.
+3. For each file entry, copy the source file to the destination path within the repository.
+    - If the source file has a `.tpl` extension, evaluate the the source file as a [text/template](https://pkg.go.dev/text/template) file using the [`tpl` CLI tool](https://github.com/bluebrown/go-template-cli).
+    - The values from `repo-sync.yml` are available within the template.
+    - Destination filenames may also use the template syntax.
+4. Commit and push the changes directly to each repo's main branch.
 
 ## Components
 
