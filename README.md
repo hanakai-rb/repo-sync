@@ -1,3 +1,151 @@
-# Repo sync
+# ☀️ Hanakai repo sync
 
 [![Sync status](https://github.com/hanakai-rb/repo-sync/actions/workflows/repo-sync.yml/badge.svg)](https://github.com/hanakai-rb/repo-sync/actions/workflows/repo-sync.yml)
+
+A GitHub Action and supporting tooling for synchronizing files across Hanakai repositories in the [hanami](https://github.com/hamami), [dry-rb](https://github.com/dry-rb) and [rom-rb](https://github.com/rom-rb) organizations.
+
+## How does it work?
+
+Inside [.github/workflows/repo-sync.yml](.github/workflows/repo-sync.yml) in this repo, we define a repo sync job, which contains a list of repositories and the files to sync within them. See this (shortened) example:
+
+```yaml
+repo_sync:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v2
+    - name: Sync
+      uses: ./repo-sync-action
+      with:
+        REPOSITORIES: |
+          hanami/view
+          dry-rb/dry-operation
+        FILES: |
+          templates/gem/.github/workflows/ci.yml.tpl=.github/workflows/ci.yml
+          templates/gem/.rubocop.yml=.rubocop.yml
+          templates/gem/README.md.tpl=README.md
+          templates/gem/gemspec.rb.tpl={{ .name.gem }}.gemspec
+        REPO_SYNC_SCHEMA_PATH: templates/repo-sync-schema.json
+        TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
+```
+
+When this action runs, it will:
+
+- Check out each repository in `REPOSITORIES`.
+- Validate the repository's `repo-sync.yml` against the JSON schema at `REPO_SYNC_SCHEMA_PATH`.
+- For each entry in `FILES` (in `source=dest` format), copy the source file to the destination path within the repository.
+- If the source file has a `.tpl` extension, evaluate the the source file as a Go [text/template](https://pkg.go.dev/text/template) file using the [`tpl` CLI tool](https://github.com/bluebrown/go-template-cli). The values from `repo-sync.yml` are available within the template.
+- Destination filenames themselves also support text/template syntax.
+- Commit and push the changes directly to each repo's main branch.
+
+## Components
+
+### GitHub Action ([`repo-sync-action/`](repo-sync-action))
+
+A containerized GitHub action that runs the file sync. This is kept simple by design: just bash gluing together a range of focused CLI tools.
+
+[`entrypoint.sh`](repo-sync-action/entrypoint.sh) manages the high-level flow, with most of the logic kept in [`functions.sh`](repo-sync-action/entrypoint.sh), allowing for reuse in local testing.
+
+### Local sync ([`local-sync/`](`local-sync/`) via [`bin/local-sync`](bin/local-sync))
+
+A script to test the file sync against local checkouts of repos. This allows for easy development of templates and sync logic, and avoids the hassle of CI runs and risk of unwanted changes to real repositories.
+
+To provide a faithful as possible reproduction of the GitHub Action, this script runs via Docker (to use the same tools and environment) and invokes the same internal logic from the action's [`functions.sh`](repo-sync-action/entrypoint.sh)
+
+### Templates library ([`templates/`](templates/))
+
+The templates that we sync across our repos. Currently, this is just a single set of templates for our standard Ruby gems. In the future, we may expand this library to cover different repo archetypes.
+
+### RuboCop config ([`rubocop/rubocop.yml`](rubocop/rubocop.yml))
+
+A shared [RuboCop](https://rubocop.org) config used across our repos. This is stored here as a convenience, since it can be referenced directly by the RuboCop configs in each repo, which happen to be synced from [`templates/gem/.rubocop.yml`](templates/gem/.rubocop.yml).
+
+## Usage
+
+### GitHub Action
+
+Manage the workflow file at [`.github/workflows/repo-sync.yml`](.github/workflows/repo-sync.yml). Add to the `REPOSITORIES` and `FILES` lists as needed.
+
+`REPOSITORIES` should be a list of GitHub repository paths:
+
+```yaml
+REPOSITORIES: |
+  hanami/hanami
+  dry-rb/dry-operation
+  rom-rb/rom-sql
+```
+
+To use a non-default branch, specify it with an `@`:
+
+```yaml
+REPOSITORIES: |
+  hanami/hanami@unstable
+```
+
+`FILES` should be a list of `<source>=<destination>` pairs, delimited by `=`.
+
+Source files come from this repository, and destination files are created or updated in the target repositories listed in `REPOSITORIES`. These files are relative to the root of each repository.
+
+You can use template syntax to name destination files using data from each repo's `repo-sync.yml`. See [[template authoring]](#template-authoring) for more details on this syntax.
+
+```yaml
+FILES: |
+  templates/gem/.github/workflows/ci.yml.tpl=.github/workflows/ci.yml
+  templates/gem/.rubocop.yml=.rubocop.yml
+  templates/gem/README.md.tpl=README.md
+  templates/gem/gemspec.rb.tpl={{ .name.gem }}.gemspec
+```
+
+The action runs on:
+
+- Pushes to the main branch
+- [Manual triggers](https://github.com/hanakai-rb/repo-sync/actions/workflows/repo-sync.yml)
+
+Later, we should add a nightly sync to catch syncs that should run due to changes in the target repos' `repo-sync.yml` data (or alternatively, sync another workflow to each repo that triggers a sync in reponse to `repo-sync.yml` being updated).
+
+### Template authoring
+
+Templates with `.tpl` extensions are are evaluated as Go [text/template](https://pkg.go.dev/text/template) files using the [`tpl` CLI tool](https://github.com/bluebrown/go-template-cli).
+
+[`templates/gem/gemspec.rb.tpl`](templates/gem/gemspec.rb.tpl) is our most complex template so far, and a helpful example of what's possible:
+
+```
+Gem::Specification.new do |spec|
+  spec.name          = "{{ .name.gem }}"
+  spec.authors       = ["{{ join "\", \"" .gemspec.authors }}"]
+  spec.email         = ["{{ join "\", \"" .gemspec.email }}"]
+  spec.license       = "MIT"
+  spec.version       = {{ .name.constant }}::VERSION.dup
+
+  spec.summary = "{{ .gemspec.summary }}"
+  {{ if .gemspec.description -}}
+    spec.description = "{{ .gemspec.description }}"
+  {{ else -}}
+    spec.description = spec.summary
+  {{ end -}}
+  spec.homepage      = "https://dry-rb.org/gems/{{ .name.gem }}"
+  spec.files         = Dir["{{ join "\", \"" $file_globs }}"]
+  spec.bindir        = "bin"
+  {{ if eq (len (default (list) .gemspec.executables)) 0 -}}
+  spec.executables   = []
+  {{ else -}}
+  spec.executables   = ["{{ join "\", \"" .gemspec.executables }}"]
+  {{ end -}}
+
+  # ...
+end
+```
+
+Values like `.name.gem` and `.gemspec.summary` come from the values defined in each repo's `repo-sync.yml` file. For example:
+
+```yaml
+name:
+  gem: hanami-view
+gemspec:
+  summary: "A super cool view rendering system"
+```
+
+Functions like `if`, `eq`, `len`, `default`, `join`, etc. are available from:
+
+- [text/template's built-in functions](https://pkg.go.dev/text/template#hdr-Functions)
+- [Sprig functions](https://masterminds.github.io/sprig/)
+- [Custom functions](https://github.com/bluebrown/go-template-cli/tree/main/textfunc) built into the `tpl` CLI itself
