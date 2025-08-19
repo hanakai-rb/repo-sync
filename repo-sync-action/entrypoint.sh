@@ -6,9 +6,6 @@ trap 'STATUS=$?' ERR
 
 source /functions.sh
 
-cp /error-matcher.json $HOME/file-sync-error-matcher.json
-echo "::add-matcher::$HOME/file-sync-error-matcher.json"
-
 # Prepare inputs
 REPOSITORIES=($INPUT_REPOSITORIES)
 mapfile -t FILES < <(echo "$INPUT_FILES" | grep -v '^$')

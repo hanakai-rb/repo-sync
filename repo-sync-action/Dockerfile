@@ -25,8 +25,6 @@ RUN curl -fsSL https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_linu
 RUN curl -fsSL https://github.com/bluebrown/go-template-cli/releases/download/v0.3.2/tpl-linux-amd64-static > /usr/local/bin/tpl && \
   chmod 755 /usr/local/bin/tpl
 
-COPY error-matcher.json /error-matcher.json
-
 COPY functions.sh /functions.sh
 COPY entrypoint.sh /entrypoint.sh
 
