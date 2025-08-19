@@ -6,7 +6,7 @@ A GitHub Action and supporting tooling for synchronizing files across Hanakai re
 
 ## How does it work?
 
-In [`.github/workflows/repo-sync.yml`](.github/workflows/repo-sync.yml) in this repo, we define a job that configures a list of repositories and files to be synced across each. For example:
+In [`.github/workflows/repo-sync.yml`](.github/workflows/repo-sync.yml) in this repo, we define a job with a list of repositories and files to be synced across each. For example:
 
 ```yaml
 repo_sync:
