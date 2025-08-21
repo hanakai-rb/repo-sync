@@ -75,16 +75,29 @@ REPOSITORIES: |
   rom-rb/rom-sql
 ```
 
-To use a non-default branch, specify it with an `@`:
+To use a non-default branch, specify the branch name after an `@` delimiter:
 
 ```yaml
 REPOSITORIES: |
   hanami/hanami@unstable
 ```
 
-`FILES` should be a list of `<source>=<destination>` pairs, delimited by `=`.
+`FILES` should be a list of `<source>=<destination>` pairs, delimited by `=`:
 
-Source files come from this repository, and destination files are created or updated in the target repositories listed in `REPOSITORIES`. These files are relative to the root of each repository.
+```yaml
+FILES: |
+  templates/gem/.github/workflows/ci.yml.tpl=.github/workflows/ci.yml
+  templates/gem/.rubocop.yml=.rubocop.yml
+```
+
+Entire folders may be synced (though for our purposes, it's unlikely we'll need this). Specify folders with a trailing slash:
+
+```yaml
+FILES: |
+  templates/gem/some-folder/=another-folder/
+```
+
+Source files come from this repository, and destination files are created or updated in each target repository listed in `REPOSITORIES`. File paths are all relative to the root of each repository.
 
 You can use template syntax to name destination files using data from each repo's `repo-sync.yml`. See [[template authoring]](#template-authoring) for more details on this syntax.
 
@@ -102,6 +115,19 @@ The action runs on:
 - [Manual triggers](https://github.com/hanakai-rb/repo-sync/actions/workflows/repo-sync.yml)
 
 Later, we should add a nightly sync to catch syncs that should run due to changes in the target repos' `repo-sync.yml` data (or alternatively, sync another workflow to each repo that triggers a sync in reponse to `repo-sync.yml` being updated).
+> [!TIP]
+> Later, we should add a daily scheduled run to trigger files changes in response to `repo-sync.yml` changs in each repo. Alternatively, we could sync a dedicated workflow to each repo that triggers a sync in _this_ repo reponse to `repo-sync.yml` being updated.
+
+#### Action parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `REPOSITORIES` | Yes | List of repositories to sync files to (formatted as `owner/repo` or `owner/repo@branch`) |
+| `FILES` | Yes | File mappings in `source=destination` format |
+| `REPO_SYNC_SCHEMA_PATH` | Yes | Path to JSON schema for validation |
+| `TOKEN` | Yes | GitHub access token with "repo" scope, plus "workflow" scope if managing Actions-related files |
+| `GIT_EMAIL` | No | Git commit email (default committer is "github-actions[bot]") |
+| `GIT_USERNAME` | No | Git commit username (default committer is "github-actions[bot]") |
 
 ### Template authoring
 
