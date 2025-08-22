@@ -6,7 +6,7 @@ A GitHub Action and supporting tooling for synchronizing files across Hanakai re
 
 ## How does it work?
 
-In [`.github/workflows/repo-sync.yml`](.github/workflows/repo-sync.yml) in this repo, we define a job with a list of repositories and files to be synced across each. For example:
+In [`.github/workflows/repo-sync.yml`](.github/workflows/repo-sync.yml), we define a job with a list of repositories and files to be synced across each. A simplified example:
 
 ```yaml
 repo_sync:
@@ -30,35 +30,39 @@ repo_sync:
 
 When this action runs, it will:
 
-1. Check out each repository.
-2. Validate the repository's `repo-sync.yml` against the configured JSON schema.
-3. For each file entry, copy the source file to the destination path within the repository.
+1. Check out each repo.
+2. Validate the repo’s `repo-sync.yml` against the configured JSON schema.
+3. For each file entry, copy the source file to the destination path within the repo.
     - If the source file has a `.tpl` extension, evaluate the the source file as a [text/template](https://pkg.go.dev/text/template) file using the [`tpl` CLI tool](https://github.com/bluebrown/go-template-cli).
     - The values from `repo-sync.yml` are available within the template.
     - Destination filenames may also use the template syntax.
-4. Commit and push the changes directly to each repo's main branch.
+4. Commit and push the changes directly to each repo’s main branch.
 
 ## Components
 
 ### GitHub Action ([`repo-sync-action/`](repo-sync-action))
 
-A containerized GitHub action that runs the file sync. This is kept simple by design: just bash gluing together a range of focused CLI tools.
+A containerized GitHub action that runs the file sync. This is simple by design: just a Bash script gluing together a range of CLI tools.
 
 [`entrypoint.sh`](repo-sync-action/entrypoint.sh) manages the high-level flow, with most of the logic kept in [`functions.sh`](repo-sync-action/entrypoint.sh), allowing for reuse in local testing.
 
 ### Local sync ([`local-sync/`](`local-sync/`) via [`bin/local-sync`](bin/local-sync))
 
-A script to test the file sync against local checkouts of repos. This allows for easy development of templates and sync logic, and avoids the hassle of CI runs and risk of unwanted changes to real repositories.
+A script to test the file sync against local checkouts of repos. This allows for fast and easy development of templates and sync logic, avoiding the hassle of waiting for CI and the risk of unexpected changes to real repositories.
 
-To provide a faithful as possible reproduction of the GitHub Action, this script runs via Docker (to use the same tools and environment) and invokes the same internal logic from the action's [`functions.sh`](repo-sync-action/entrypoint.sh)
+To provide a faithful reproduction of the GitHub Action, this script also runs via Docker and invokes the same internal logic from the action’s [`functions.sh`](repo-sync-action/entrypoint.sh)
 
-### Templates library ([`templates/`](templates/))
+### Template library ([`templates/`](templates/))
 
-The templates that we sync across our repos. Currently, this is just a single set of templates for our standard Ruby gems. In the future, we may expand this library to cover different repo archetypes.
+The templates we sync across our repos.
+
+Currently, this is a single set of templates for our standard Ruby gem repositories. In future, we may expand the template library to cover different repo archetypes.
 
 ### RuboCop config ([`rubocop/rubocop.yml`](rubocop/rubocop.yml))
 
-A shared [RuboCop](https://rubocop.org) config used across our repos. This is stored here as a convenience, since it can be referenced directly by the RuboCop configs in each repo, which happen to be synced from [`templates/gem/.rubocop.yml`](templates/gem/.rubocop.yml).
+A shared [RuboCop](https://rubocop.org) config used across our repos.
+
+This is kept here as a convenience, and is referenced directly by the RuboCop configs in each repo, which happen to be synced from [`templates/gem/.rubocop.yml`](templates/gem/.rubocop.yml).
 
 ## Usage
 
@@ -66,7 +70,7 @@ A shared [RuboCop](https://rubocop.org) config used across our repos. This is st
 
 Manage the workflow file at [`.github/workflows/repo-sync.yml`](.github/workflows/repo-sync.yml). Add to the `REPOSITORIES` and `FILES` lists as needed.
 
-`REPOSITORIES` should be a list of GitHub repository paths:
+`REPOSITORIES` should be a list of GitHub repo paths:
 
 ```yaml
 REPOSITORIES: |
@@ -90,16 +94,16 @@ FILES: |
   templates/gem/.rubocop.yml=.rubocop.yml
 ```
 
-Entire folders may be synced (though for our purposes, it's unlikely we'll need this). Specify folders with a trailing slash:
+Entire folders may be synced (though for our purposes, it’s unlikely we’ll need this). Specify folders with a trailing slash:
 
 ```yaml
 FILES: |
   templates/gem/some-folder/=another-folder/
 ```
 
-Source files come from this repository, and destination files are created or updated in each target repository listed in `REPOSITORIES`. File paths are all relative to the root of each repository.
+Source files come from this repo, and destination files are created or updated in each target repo listed in `REPOSITORIES`. File paths are all relative to the root of each repo.
 
-You can use template syntax to name destination files using data from each repo's `repo-sync.yml`. See [[template authoring]](#template-authoring) for more details on this syntax.
+You can use template syntax to name destination files using data from each repo’s `repo-sync.yml`. See [template authoring](#template-authoring) for more details on this syntax.
 
 ```yaml
 FILES: |
@@ -114,7 +118,7 @@ The action runs on:
 - Pushes to the main branch
 - [Manual triggers](https://github.com/hanakai-rb/repo-sync/actions/workflows/repo-sync.yml)
 
-> [!TIP]
+> [!NOTE]
 > Later, we should add a daily scheduled run to trigger files changes in response to `repo-sync.yml` changs in each repo. Alternatively, we could sync a dedicated workflow to each repo that triggers a sync in _this_ repo reponse to `repo-sync.yml` being updated.
 
 #### Action parameters
@@ -132,7 +136,7 @@ The action runs on:
 
 Templates with `.tpl` extensions are are evaluated as Go [text/template](https://pkg.go.dev/text/template) files using the [`tpl` CLI tool](https://github.com/bluebrown/go-template-cli).
 
-[`templates/gem/gemspec.rb.tpl`](templates/gem/gemspec.rb.tpl) is our most complex template so far, and a helpful example of what's possible:
+[`templates/gem/gemspec.rb.tpl`](templates/gem/gemspec.rb.tpl) is our most complex template so far, and a helpful example of what’s possible:
 
 ```
 Gem::Specification.new do |spec|
@@ -161,7 +165,7 @@ Gem::Specification.new do |spec|
 end
 ```
 
-Values like `.name.gem` and `.gemspec.summary` come from the values defined in each repo's `repo-sync.yml` file. For example:
+Values like `.name.gem` and `.gemspec.summary` come from each repo’s `repo-sync.yml` file. For example:
 
 ```yaml
 name:
@@ -170,48 +174,48 @@ gemspec:
   summary: "A super cool view rendering system"
 ```
 
+`repo-sync.yml` is validated according to a JSON schema (at [`templates/repo-sync-schema.json`](templates/repo-sync-schema.json)), which should be updated as new values are required.
+
 Functions like `if`, `eq`, `len`, `default`, `join`, etc. are available from:
 
-- [text/template's built-in functions](https://pkg.go.dev/text/template#hdr-Functions)
+- [text/template’s built-in functions](https://pkg.go.dev/text/template#hdr-Functions)
 - [Sprig functions](https://masterminds.github.io/sprig/)
 - [Custom functions](https://github.com/bluebrown/go-template-cli/tree/main/textfunc) built into the `tpl` CLI itself
 
 ### Local Testing
 
-To test file sync locally, first make a local clone of a target repository. Then run `bin/local-sync`:
+To test file sync locally, first make a local clone of a target repo. Then run `bin/local-sync`:
 
 ```bash
-bin/local-sync /path/to/repository
+bin/local-sync /path/to/repo
 ```
 
-After this, you can verify the changes by running `git diff` in the target repository.
+After this, you can verify the changes by running `git diff` in the target repo.
 
 #### Advanced
 
 By default, the `templates/repo-sync-schema.json` JSON schema is used. If you want to use a different schema file, use `--schema`:
 
 ```bash
-bin/local-sync --schema templates/another-schema.json /path/to/repository
+bin/local-sync --schema templates/another-schema.json /path/to/repo
 ```
 
-The local sync runs in a Docker container defined by [`local-sync/Dockerfile`](local-sync/Dockerfile). If you're developing the tool itself, you can force the container to rebuild with `--rebuild`:
+The local sync runs in a Docker container defined by [`local-sync/Dockerfile`](local-sync/Dockerfile). If you’re developing the tool itself, you can force the container to rebuild with `--rebuild`:
 
 ```bash
-bin/local-sync --rebuild /path/to/repository
+bin/local-sync --rebuild /path/to/repo
 ```
 
 To debug the container, enter an interactive shell with `--shell`:
 
 ```bash
-bin/local-sync --shell /path/to/repository
+bin/local-sync --shell /path/to/repo
 ```
 
 ## Development
 
-### Local Development
-
-1. Clone a target repository for testing
+1. Clone a target repo for testing
 2. Make changes to templates or action code
-3. Test locally: `bin/local-sync /path/to/repository`
+3. Test locally: `bin/local-sync /path/to/repo`
 4. Verify changes: `cd /path/to/test/repo && git diff`
 5. Commit and push the changes to trigger the GitHub Action and sync files to the real repositories on GitHub.
