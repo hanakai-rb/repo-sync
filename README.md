@@ -219,3 +219,7 @@ bin/local-sync --shell /path/to/repo
 3. Test locally: `bin/local-sync /path/to/repo`
 4. Verify changes: `cd /path/to/test/repo && git diff`
 5. Commit and push the changes to trigger the GitHub Action and sync files to the real repositories on GitHub.
+
+## Acknowledgements
+
+The repo-sync-action is originally adapted from Kevin Brashears’ [github-action-file-sync](https://github.com/kbrashears5/github-action-file-sync). Thank you, Kevin!
