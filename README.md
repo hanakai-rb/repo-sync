@@ -114,7 +114,6 @@ The action runs on:
 - Pushes to the main branch
 - [Manual triggers](https://github.com/hanakai-rb/repo-sync/actions/workflows/repo-sync.yml)
 
-Later, we should add a nightly sync to catch syncs that should run due to changes in the target repos' `repo-sync.yml` data (or alternatively, sync another workflow to each repo that triggers a sync in reponse to `repo-sync.yml` being updated).
 > [!TIP]
 > Later, we should add a daily scheduled run to trigger files changes in response to `repo-sync.yml` changs in each repo. Alternatively, we could sync a dedicated workflow to each repo that triggers a sync in _this_ repo reponse to `repo-sync.yml` being updated.
 
@@ -176,3 +175,43 @@ Functions like `if`, `eq`, `len`, `default`, `join`, etc. are available from:
 - [text/template's built-in functions](https://pkg.go.dev/text/template#hdr-Functions)
 - [Sprig functions](https://masterminds.github.io/sprig/)
 - [Custom functions](https://github.com/bluebrown/go-template-cli/tree/main/textfunc) built into the `tpl` CLI itself
+
+### Local Testing
+
+To test file sync locally, first make a local clone of a target repository. Then run `bin/local-sync`:
+
+```bash
+bin/local-sync /path/to/repository
+```
+
+After this, you can verify the changes by running `git diff` in the target repository.
+
+#### Advanced
+
+By default, the `templates/repo-sync-schema.json` JSON schema is used. If you want to use a different schema file, use `--schema`:
+
+```bash
+bin/local-sync --schema templates/another-schema.json /path/to/repository
+```
+
+The local sync runs in a Docker container defined by [`local-sync/Dockerfile`](local-sync/Dockerfile). If you're developing the tool itself, you can force the container to rebuild with `--rebuild`:
+
+```bash
+bin/local-sync --rebuild /path/to/repository
+```
+
+To debug the container, enter an interactive shell with `--shell`:
+
+```bash
+bin/local-sync --shell /path/to/repository
+```
+
+## Development
+
+### Local Development
+
+1. Clone a target repository for testing
+2. Make changes to templates or action code
+3. Test locally: `bin/local-sync /path/to/repository`
+4. Verify changes: `cd /path/to/test/repo && git diff`
+5. Commit and push the changes to trigger the GitHub Action and sync files to the real repositories on GitHub.
