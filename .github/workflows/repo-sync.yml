@@ -16,6 +16,7 @@ jobs:
         with:
           REPOSITORIES: |
             hanakai-rb/hanami-view
+            dry-rb/dry-rails
           FILES: |
             templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
             templates/gem/.github/ISSUE_TEMPLATE/bug-report.md=.github/ISSUE_TEMPLATE/bug-report.md
