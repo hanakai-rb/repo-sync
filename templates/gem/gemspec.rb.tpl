@@ -16,11 +16,11 @@ Gem::Specification.new do |spec|
   spec.license       = "MIT"
   spec.version       = {{ .name.constant }}::VERSION.dup
 
-  spec.summary = "{{ .gemspec.summary }}"
+  spec.summary       = "{{ .gemspec.summary }}"
   {{ if .gemspec.description -}}
-    spec.description = "{{ .gemspec.description }}"
+  spec.description   = "{{ .gemspec.description }}"
   {{ else -}}
-    spec.description = spec.summary
+  spec.description   = spec.summary
   {{ end -}}
   spec.homepage      = "https://dry-rb.org/gems/{{ .name.gem }}"
   spec.files         = Dir["{{ join "\", \"" $file_globs }}"]
@@ -47,5 +47,5 @@ Gem::Specification.new do |spec|
   {{ range default (list) .gemspec.development_dependencies -}}
   {{ $dependency := (kindIs "slice" .) | ternary . (list .) -}}
   spec.add_development_dependency "{{ join "\", \"" $dependency }}"
-  {{ end -}}
+  {{ end }}
 end
