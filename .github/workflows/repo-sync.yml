@@ -19,6 +19,7 @@ jobs:
             dry-rb/dry-auto_inject
             dry-rb/dry-cli
             dry-rb/dry-core
+            dry-rb/dry-inflector
             dry-rb/dry-logger
             dry-rb/dry-rails
           FILES: |
