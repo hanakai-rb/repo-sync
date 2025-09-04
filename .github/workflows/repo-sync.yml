@@ -16,6 +16,7 @@ jobs:
         with:
           REPOSITORIES: |
             hanakai-rb/hanami-view
+            dry-rb/dry-auto_inject
             dry-rb/dry-core
             dry-rb/dry-logger
             dry-rb/dry-rails
