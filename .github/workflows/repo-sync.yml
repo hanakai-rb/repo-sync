@@ -20,6 +20,7 @@ jobs:
             dry-rb/dry-cli
             dry-rb/dry-configurable
             dry-rb/dry-core
+            dry-rb/dry-effects
             dry-rb/dry-inflector
             dry-rb/dry-logger
             dry-rb/dry-matcher
