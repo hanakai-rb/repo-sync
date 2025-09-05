@@ -22,6 +22,7 @@ jobs:
             dry-rb/dry-core
             dry-rb/dry-inflector
             dry-rb/dry-logger
+            dry-rb/dry-monads
             dry-rb/dry-rails
           FILES: |
             templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
