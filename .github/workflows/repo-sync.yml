@@ -18,6 +18,7 @@ jobs:
             hanakai-rb/hanami-view
             dry-rb/dry-auto_inject
             dry-rb/dry-cli
+            dry-rb/dry-configurable
             dry-rb/dry-core
             dry-rb/dry-inflector
             dry-rb/dry-logger
