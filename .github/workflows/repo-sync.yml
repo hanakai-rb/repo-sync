@@ -21,6 +21,7 @@ jobs:
             dry-rb/dry-configurable
             dry-rb/dry-core
             dry-rb/dry-effects
+            dry-rb/dry-events
             dry-rb/dry-inflector
             dry-rb/dry-logger
             dry-rb/dry-matcher
