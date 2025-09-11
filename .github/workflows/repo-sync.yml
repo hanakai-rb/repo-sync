@@ -30,6 +30,7 @@ jobs:
             dry-rb/dry-matcher
             dry-rb/dry-monads
             dry-rb/dry-rails
+            dry-rb/dry-transformer
           FILES: |
             templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
             templates/gem/.github/ISSUE_TEMPLATE/bug-report.md=.github/ISSUE_TEMPLATE/bug-report.md
