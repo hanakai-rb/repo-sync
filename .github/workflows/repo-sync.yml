@@ -26,6 +26,7 @@ jobs:
             dry-rb/dry-inflector
             dry-rb/dry-initializer
             dry-rb/dry-logger
+            dry-rb/dry-logic
             dry-rb/dry-matcher
             dry-rb/dry-monads
             dry-rb/dry-rails
