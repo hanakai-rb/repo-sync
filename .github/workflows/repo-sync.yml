@@ -24,6 +24,7 @@ jobs:
             dry-rb/dry-events
             dry-rb/dry-files
             dry-rb/dry-inflector
+            dry-rb/dry-initializer
             dry-rb/dry-logger
             dry-rb/dry-matcher
             dry-rb/dry-monads
