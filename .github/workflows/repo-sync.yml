@@ -29,6 +29,7 @@ jobs:
             dry-rb/dry-logic
             dry-rb/dry-matcher
             dry-rb/dry-monads
+            dry-rb/dry-monitor
             dry-rb/dry-rails
             dry-rb/dry-transaction
             dry-rb/dry-transformer
