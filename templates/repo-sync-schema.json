@@ -68,6 +68,13 @@
             ]
           },
           "description": "Runtime dependencies"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional file patterns to include in the gem"
         }
       }
     }

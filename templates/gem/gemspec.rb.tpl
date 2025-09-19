@@ -1,5 +1,6 @@
 {{ $gem_path := .name.gem | replace "-" "/" -}}
-{{ $file_globs := list "CHANGELOG.md" "LICENSE" "README.md" (printf "%s.gemspec" .name.gem) "lib/**/*" -}}
+{{ $default_files := list "CHANGELOG.md" "LICENSE" "README.md" (printf "%s.gemspec" .name.gem) "lib/**/*" -}}
+{{ $file_globs := concat $default_files (.gemspec.files | default (list)) -}}
 
 # frozen_string_literal: true
 
