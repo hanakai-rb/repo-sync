@@ -18,11 +18,9 @@ Gem::Specification.new do |spec|
   spec.version       = {{ .name.constant }}::VERSION.dup
 
   spec.summary       = "{{ .gemspec.summary }}"
-  {{ if .gemspec.description -}}
-  spec.description   = "{{ .gemspec.description }}"
-  {{ else -}}
-  spec.description   = spec.summary
-  {{ end -}}
+  {{ if .gemspec.description }}{{ if gt (len .gemspec.description) 100 }}spec.description   = <<~TEXT
+{{ .gemspec.description | trim | trimSuffix "\n" | indent 4 }}
+  TEXT{{ else }}spec.description   = "{{ .gemspec.description }}"{{ end }}{{ else }}spec.description   = spec.summary{{ end }}
   spec.homepage      = "https://dry-rb.org/gems/{{ .name.gem }}"
   spec.files         = Dir["{{ join "\", \"" $file_globs }}"]
   spec.bindir        = "bin"
