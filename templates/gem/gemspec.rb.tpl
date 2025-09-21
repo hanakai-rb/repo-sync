@@ -38,13 +38,8 @@ Gem::Specification.new do |spec|
   spec.metadata["funding_uri"]       = "https://github.com/sponsors/hanami"
 
   spec.required_ruby_version = "{{ default "3.1" .gemspec.required_ruby_version }}"
-
-  {{ range default (list) .gemspec.runtime_dependencies -}}
-  spec.add_runtime_dependency "{{ join "\", \"" . }}"
-  {{ end -}}
-
-  {{ range default (list) .gemspec.development_dependencies -}}
-  {{ $dependency := (kindIs "slice" .) | ternary . (list .) -}}
-  spec.add_development_dependency "{{ join "\", \"" $dependency }}"
-  {{ end }}
+{{ range default (list) .gemspec.runtime_dependencies }}
+  spec.add_runtime_dependency "{{ join "\", \"" . }}"{{ end -}}
+  {{ range default (list) .gemspec.development_dependencies }}
+  {{ $dependency := (kindIs "slice" .) | ternary . (list .) }}spec.add_development_dependency "{{ join "\", \"" $dependency }}"{{ end }}
 end
