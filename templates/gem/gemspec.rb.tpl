@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   {{ if .gemspec.description }}{{ if gt (len .gemspec.description) 100 }}spec.description   = <<~TEXT
 {{ .gemspec.description | trim | trimSuffix "\n" | indent 4 }}
   TEXT{{ else }}spec.description   = "{{ .gemspec.description }}"{{ end }}{{ else }}spec.description   = spec.summary{{ end }}
-  spec.homepage      = "https://dry-rb.org/gems/{{ .name.gem }}"
+  spec.homepage      = "{{ .gemspec.homepage }}"
   spec.files         = Dir["{{ join "\", \"" $file_globs }}"]
   spec.bindir        = "bin"
   {{ if eq (len (default (list) .gemspec.executables)) 0 -}}
@@ -33,10 +33,11 @@ Gem::Specification.new do |spec|
 
   spec.extra_rdoc_files = ["README.md", "CHANGELOG.md", "LICENSE"]
 
+  {{ $github_path := printf "%s/%s" .github_org .name.gem -}}
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
-  spec.metadata["changelog_uri"]     = "https://github.com/dry-rb/{{ .name.gem }}/blob/main/CHANGELOG.md"
-  spec.metadata["source_code_uri"]   = "https://github.com/dry-rb/{{ .name.gem }}"
-  spec.metadata["bug_tracker_uri"]   = "https://github.com/dry-rb/{{ .name.gem }}/issues"
+  spec.metadata["changelog_uri"]     = "https://github.com/{{ $github_path }}/blob/main/CHANGELOG.md"
+  spec.metadata["source_code_uri"]   = "https://github.com/{{ $github_path }}"
+  spec.metadata["bug_tracker_uri"]   = "https://github.com/{{ $github_path }}/issues"
   spec.metadata["funding_uri"]       = "https://github.com/sponsors/hanami"
 
   spec.required_ruby_version = "{{ default "3.1" .gemspec.required_ruby_version }}"
