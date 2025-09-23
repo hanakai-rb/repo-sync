@@ -35,6 +35,7 @@ jobs:
             dry-rb/dry-struct
             dry-rb/dry-transaction
             dry-rb/dry-transformer
+            dry-rb/dry-validation
           FILES: |
             templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
             templates/gem/.github/ISSUE_TEMPLATE/bug-report.md=.github/ISSUE_TEMPLATE/bug-report.md
