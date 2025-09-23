@@ -32,6 +32,7 @@ jobs:
             dry-rb/dry-rails
             dry-rb/dry-schema
             dry-rb/dry-struct
+            dry-rb/dry-system
             dry-rb/dry-transaction
             dry-rb/dry-transformer
             dry-rb/dry-types
