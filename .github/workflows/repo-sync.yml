@@ -15,7 +15,6 @@ jobs:
         uses: ./repo-sync-action
         with:
           REPOSITORIES: |
-            hanakai-rb/hanami-view
             dry-rb/dry-auto_inject
             dry-rb/dry-cli
             dry-rb/dry-configurable
