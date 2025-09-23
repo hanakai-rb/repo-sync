@@ -31,6 +31,7 @@ jobs:
             dry-rb/dry-monads
             dry-rb/dry-monitor
             dry-rb/dry-rails
+            dry-rb/dry-schema
             dry-rb/dry-struct
             dry-rb/dry-transaction
             dry-rb/dry-transformer
