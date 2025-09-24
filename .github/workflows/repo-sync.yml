@@ -29,6 +29,7 @@ jobs:
             dry-rb/dry-matcher
             dry-rb/dry-monads
             dry-rb/dry-monitor
+            dry-rb/dry-operation
             dry-rb/dry-rails
             dry-rb/dry-schema
             dry-rb/dry-struct
