@@ -1,6 +1,6 @@
 # This file is synced from hanakai-rb/repo-sync
 
-{{ $ruby_versions :=  list "3.4" "3.3" "3.3.0" "3.2" "3.1" }}
+{{ $ruby_versions := concat (list "3.4" "3.3" "3.2" "3.1") (.ci.rubies | default (list)) }}
 name: CI
 
 on:
@@ -19,9 +19,9 @@ jobs:
       fail-fast: false
       matrix:
         ruby:
-        {{ range $ruby_versions }}
-        - {{ . }}
-        {{ end }}
+        {{ range $ruby_versions -}}
+        - "{{ . }}"
+        {{ end -}}
         include:
           - ruby: "3.4"
             coverage: "true"

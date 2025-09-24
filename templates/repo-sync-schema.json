@@ -21,6 +21,18 @@
       "type": "string",
       "description": "GitHub organization name"
     },
+    "ci": {
+      "type": "object",
+      "properties": {
+        "rubies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional Ruby versions to test against"
+        }
+      }
+    },
     "gemspec": {
       "type": "object",
       "required": ["authors", "email", "summary", "homepage", "required_ruby_version"],
