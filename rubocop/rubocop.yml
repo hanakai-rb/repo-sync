@@ -35,6 +35,10 @@ Lint/AmbiguousBlockAssociation:
 Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
 
+Layout/LeadingCommentSpace:
+  AllowRBSInlineAnnotation: true
+  AllowSteepAnnotation: true
+
 Layout/LineLength:
   Max: 120
   Exclude:
