@@ -1,6 +1,6 @@
 # This file is synced from hanakai-rb/repo-sync
 
-{{ $ruby_versions := concat (list "3.4" "3.3" "3.2" "3.1") (.ci.rubies | default (list)) }}
+{{ $ruby_versions := concat (list "3.4" "3.3" "3.2") (.ci.rubies | default (list)) }}
 name: CI
 
 on:

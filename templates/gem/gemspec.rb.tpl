@@ -40,7 +40,7 @@ Gem::Specification.new do |spec|
   spec.metadata["bug_tracker_uri"]   = "https://github.com/{{ $github_path }}/issues"
   spec.metadata["funding_uri"]       = "https://github.com/sponsors/hanami"
 
-  spec.required_ruby_version = "{{ default "3.1" .gemspec.required_ruby_version }}"
+  spec.required_ruby_version = "{{ default "3.2" .gemspec.required_ruby_version }}"
 {{ range default (list) .gemspec.runtime_dependencies }}
   spec.add_runtime_dependency "{{ join "\", \"" . }}"{{ end -}}
   {{ range default (list) .gemspec.development_dependencies }}
