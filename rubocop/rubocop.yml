@@ -1,7 +1,7 @@
 # Please keep config grouped and ordered alphabetically.
 
 AllCops:
-  TargetRubyVersion: 3.1
+  TargetRubyVersion: 3.2
   DisplayCopNames: true
   DisplayStyleGuide: true
   ExtraDetails: false
@@ -266,7 +266,7 @@ Style/HashEachMethods:
   Enabled: false
 
 Style/HashSyntax:
-  EnforcedShorthandSyntax: never
+  EnforcedShorthandSyntax: either
 
 Style/HashTransformKeys:
   Enabled: true
