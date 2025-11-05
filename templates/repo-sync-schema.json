@@ -35,7 +35,7 @@
     },
     "gemspec": {
       "type": "object",
-      "required": ["authors", "email", "summary", "homepage", "required_ruby_version"],
+      "required": ["authors", "email", "summary", "homepage"],
       "properties": {
         "authors": {
           "type": "array",
