@@ -19,6 +19,8 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     continue-on-error: {{ print "${{" }} matrix.optional }}
+    env:
+      JRUBY_OPTS: ${{ matrix.jruby_opts || '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -32,6 +34,7 @@ jobs:
             coverage: "true"
           - ruby: "jruby"
             optional: true
+            jruby_opts: "-X+O"
     env:
       COVERAGE: {{ print "${{" }}matrix.coverage}}
     steps:
