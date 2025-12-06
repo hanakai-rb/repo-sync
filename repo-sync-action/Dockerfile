@@ -21,9 +21,9 @@ RUN curl -fsSL https://github.com/neilpa/yajsv/releases/download/v1.4.1/yajsv.li
 RUN curl -fsSL https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_linux_amd64 > /usr/local/bin/yq && \
   chmod 755 /usr/local/bin/yq
 
-# Install go-template-cli (the tpl command, for rendering templates)
-RUN curl -fsSL https://github.com/bluebrown/go-template-cli/releases/download/v0.3.2/tpl-linux-amd64-static > /usr/local/bin/tpl && \
-  chmod 755 /usr/local/bin/tpl
+# Install gomplate (for rendering templates)
+RUN curl -fsSL https://github.com/hairyhenderson/gomplate/releases/download/v4.3.3/gomplate_linux-amd64 > /usr/local/bin/gomplate && \
+  chmod 755 /usr/local/bin/gomplate
 
 COPY functions.sh /functions.sh
 COPY entrypoint.sh /entrypoint.sh

@@ -100,7 +100,7 @@ generate_target_filename() {
   local TEMP_FILE=$(mktemp)
   echo "$FILENAME" > "$TEMP_FILE"
 
-  tpl --file "$TEMP_FILE" --decoder yaml < "$REPO_SYNC_YML" > "${TEMP_FILE}.out" || {
+  gomplate --missing-key=zero -f "$TEMP_FILE" -c .="$REPO_SYNC_YML" > "${TEMP_FILE}.out" || {
     # If we can't generate the name, skip handling this file
     log "ERROR: Template processing failed for filename [$FILENAME]"
     rm "$TEMP_FILE" "${TEMP_FILE}.out" 2>/dev/null
@@ -145,10 +145,13 @@ generate_target_file() {
   fi
 
   # Process the template
-  tpl --file "$SOURCE_FULL_PATH" --decoder yaml < "$REPO_SYNC_YML" > "$DEST_FULL_PATH" || {
+  gomplate --missing-key=zero -f "$SOURCE_FULL_PATH" -c .="$REPO_SYNC_YML" > "$DEST_FULL_PATH" || {
     log "ERROR: Processing template ${SOURCE_FULL_PATH} failed"
     return 1
   }
+
+  # Add a newline to the end of template-generated files (gomplate strips trailing newlines)
+  echo >> "$DEST_FULL_PATH"
 }
 
 log() {

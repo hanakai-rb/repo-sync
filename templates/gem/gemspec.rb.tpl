@@ -1,6 +1,6 @@
-{{ $gem_path := .name.gem | replace "-" "/" -}}
-{{ $default_files := list "CHANGELOG.md" "LICENSE" "README.md" (printf "%s.gemspec" .name.gem) "lib/**/*" -}}
-{{ $file_globs := concat $default_files (.gemspec.files | default (list)) -}}
+{{ $gem_path := .name.gem | strings.ReplaceAll "-" "/" -}}
+{{ $default_files := coll.Slice "CHANGELOG.md" "LICENSE" "README.md" (printf "%s.gemspec" .name.gem) "lib/**/*" -}}
+{{ $file_globs := $default_files }}{{ range (.gemspec.files | default (coll.Slice)) }}{{ $file_globs = $file_globs | coll.Append . }}{{ end -}}
 
 # frozen_string_literal: true
 
@@ -12,22 +12,22 @@ require "{{ $gem_path }}/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "{{ .name.gem }}"
-  spec.authors       = ["{{ join "\", \"" .gemspec.authors }}"]
-  spec.email         = ["{{ join "\", \"" .gemspec.email }}"]
+  spec.authors       = ["{{ join .gemspec.authors "\", \"" }}"]
+  spec.email         = ["{{ join .gemspec.email "\", \"" }}"]
   spec.license       = "MIT"
   spec.version       = {{ .name.constant }}::VERSION.dup
 
   spec.summary       = "{{ .gemspec.summary }}"
   {{ if .gemspec.description }}{{ if gt (len .gemspec.description) 100 }}spec.description   = <<~TEXT
-{{ .gemspec.description | trim | trimSuffix "\n" | indent 4 }}
+{{ .gemspec.description | strings.TrimSpace | strings.TrimSuffix "\n" | strings.Indent 4 }}
   TEXT{{ else }}spec.description   = "{{ .gemspec.description }}"{{ end }}{{ else }}spec.description   = spec.summary{{ end }}
   spec.homepage      = "{{ .gemspec.homepage }}"
-  spec.files         = Dir["{{ join "\", \"" $file_globs }}"]
+  spec.files         = Dir["{{ join $file_globs "\", \"" }}"]
   spec.bindir        = "bin"
-  {{ if eq (len (default (list) .gemspec.executables)) 0 -}}
+  {{ if eq (len (.gemspec.executables | default (coll.Slice))) 0 -}}
   spec.executables   = []
   {{ else -}}
-  spec.executables   = ["{{ join "\", \"" .gemspec.executables }}"]
+  spec.executables   = ["{{ join .gemspec.executables "\", \"" }}"]
   {{ end -}}
   spec.require_paths = ["lib"]
 
@@ -40,9 +40,11 @@ Gem::Specification.new do |spec|
   spec.metadata["bug_tracker_uri"]   = "https://github.com/{{ $github_path }}/issues"
   spec.metadata["funding_uri"]       = "https://github.com/sponsors/hanami"
 
-  spec.required_ruby_version = "{{ default ">= 3.2" .gemspec.required_ruby_version }}"
-{{ range default (list) .gemspec.runtime_dependencies }}
-  spec.add_runtime_dependency "{{ join "\", \"" . }}"{{ end -}}
-  {{ range default (list) .gemspec.development_dependencies }}
-  {{ $dependency := (kindIs "slice" .) | ternary . (list .) }}spec.add_development_dependency "{{ join "\", \"" $dependency }}"{{ end }}
+  spec.required_ruby_version = "{{ .gemspec.required_ruby_version | default ">= 3.2" }}"
+{{ range (.gemspec.runtime_dependencies | default (coll.Slice)) }}
+  spec.add_runtime_dependency "{{ join . "\", \"" }}"
+{{- end }}
+{{- range (.gemspec.development_dependencies | default (coll.Slice)) }}
+  {{ $dependency := (test.IsKind "slice" .) | ternary . (coll.Slice .) }}spec.add_development_dependency "{{ join $dependency "\", \"" }}"
+{{- end }}
 end
