@@ -105,7 +105,7 @@ sync_repos() {
       git commit -m "$(echo -e "$commit_msg")" > /dev/null 2>&1
       COMMIT_HASH=$(git rev-parse HEAD)
 
-      echo "🚀 Pushing to ${REPO_URL} (${BRANCH_NAME})"
+      echo "Pushing to ${REPO_URL} (${BRANCH_NAME})"
       git push $REPO_URL $BRANCH_NAME > /dev/null 2>&1
 
       echo "❇️ ${#changed_files[@]} updated files:"
