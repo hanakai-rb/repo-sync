@@ -45,7 +45,6 @@ sync_repos() {
     cd $REPO_PATH
 
     if [[ -n "$PREVIEW_BRANCH" ]]; then
-      echo "🔀 Creating preview branch: ${PREVIEW_BRANCH}"
       if create_preview_branch "$REPO_PATH" "$PREVIEW_BRANCH" "$DEFAULT_BRANCH_NAME"; then
         BRANCH_NAME="$PREVIEW_BRANCH"
       else
@@ -61,8 +60,6 @@ sync_repos() {
     elif [[ "$BRANCH_NAME" != "$DEFAULT_BRANCH_NAME" ]]; then
       git fetch && git checkout -b "$BRANCH_NAME" origin/"$BRANCH_NAME" || git checkout -b "$BRANCH_NAME"
     fi
-
-    echo " "
 
     validation_result=$(validate_repo_sync_yml "$REPO_PATH" "$REPO_SYNC_SCHEMA_PATH" 2>&1)
     validation_status=$?
