@@ -25,7 +25,7 @@ git config --system core.longpaths true
 git config --global core.longpaths true
 git config --global user.email "$GIT_EMAIL" && git config --global user.name "$GIT_USERNAME"
 
-sync_repositories() {
+sync_repos() {
   local PREVIEW_BRANCH="$1"
 
   for repository in "${REPOSITORIES[@]}"; do
@@ -46,9 +46,8 @@ sync_repositories() {
 
     if [[ -n "$PREVIEW_BRANCH" ]]; then
       echo "🔀 Creating preview branch: ${PREVIEW_BRANCH}"
-      if create_or_update_preview_branch "$REPO_PATH" "$PREVIEW_BRANCH" "$DEFAULT_BRANCH_NAME"; then
+      if create_preview_branch "$REPO_PATH" "$PREVIEW_BRANCH" "$DEFAULT_BRANCH_NAME"; then
         BRANCH_NAME="$PREVIEW_BRANCH"
-        echo "✅ Preview branch ready"
       else
         echo "ERROR: Failed to create preview branch"
         echo "⛔ **${repository}** - Failed to create preview branch" >> $GITHUB_STEP_SUMMARY
@@ -134,7 +133,7 @@ sync_repositories() {
   done
 }
 
-create_or_update_preview_branch() {
+create_preview_branch() {
   local REPO_PATH="$1"
   local PREVIEW_BRANCH="$2"
   local DEFAULT_BRANCH="$3"
@@ -143,7 +142,8 @@ create_or_update_preview_branch() {
 
   git fetch origin "$DEFAULT_BRANCH" > /dev/null 2>&1
 
-  # Preview branches should always be single-commit only, to mimic the main branch sync.
+  # Preview branches should always be single-commit only, to mimic the main branch sync. If a
+  # branch exists already, delete it and start over.
   if git ls-remote --heads origin "$PREVIEW_BRANCH" | grep -q "$PREVIEW_BRANCH"; then
     git push origin --delete "$PREVIEW_BRANCH" > /dev/null 2>&1
   fi
@@ -196,16 +196,24 @@ cleanup_preview_branches() {
   done
 }
 
-if [[ -n "$PR_NUMBER" && "$PR_EVENT_TYPE" == "closed" ]]; then
+if [[ -n "$PR_NUMBER" && "$PR_EVENT_TYPE" != "closed" ]]; then
+  echo "### 🔄 Sync summary" > $GITHUB_STEP_SUMMARY
+  echo >> $GITHUB_STEP_SUMMARY
+
   PREVIEW_BRANCH="${PREVIEW_BRANCH_PREFIX}-${PR_NUMBER}"
-  echo "🧹 PR #${PR_NUMBER} closed - cleaning up preview branches"
+  echo "🔍 Creating preview branches: ${PREVIEW_BRANCH}"
+  sync_repos "$PREVIEW_BRANCH"
+
+  # Output the step summary so it can be added as a PR comment
+  echo "SYNC_SUMMARY<<EOF" >> $GITHUB_OUTPUT
+  cat $GITHUB_STEP_SUMMARY >> $GITHUB_OUTPUT
+  echo "EOF" >> $GITHUB_OUTPUT
+elif [[ -n "$PR_NUMBER" && "$PR_EVENT_TYPE" == "closed" ]]; then
+  PREVIEW_BRANCH="${PREVIEW_BRANCH_PREFIX}-${PR_NUMBER}"
+  echo "🧹 Cleaning up preview branches"
   cleanup_preview_branches "$PREVIEW_BRANCH"
-elif [[ -n "$PR_NUMBER" ]]; then
-  PREVIEW_BRANCH="${PREVIEW_BRANCH_PREFIX}-${PR_NUMBER}"
-  echo "🔍 PR #${PR_NUMBER} - creating preview branches: ${PREVIEW_BRANCH}"
-  sync_repositories "$PREVIEW_BRANCH"
 else
-  sync_repositories ""
+  sync_repos ""
 fi
 
 exit $STATUS

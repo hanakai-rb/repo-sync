@@ -11,9 +11,13 @@ on:
 jobs:
   repo_sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v2
       - name: Sync
+        id: sync
         uses: ./repo-sync-action
         with:
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -63,3 +67,11 @@ jobs:
             templates/gem/spec/support/warnings.rb=spec/support/warnings.rb
           REPO_SYNC_SCHEMA_PATH: templates/repo-sync-schema.json
           TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
+      - name: Comment
+        if: github.event.pull_request.number
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          message: ${{ steps.sync.outputs.SYNC_SUMMARY || '' }}
+          pr-number: ${{ github.event.pull_request.number }}
+          comment-tag: sync-summary
+          mode: ${{ github.event.action == 'closed' && 'delete' || 'upsert' }}
