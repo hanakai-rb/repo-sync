@@ -28,15 +28,22 @@ repo_sync:
         TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
 ```
 
-When this action runs, it will:
+**When this action runs on the main branch, it:**
 
-1. Check out each repo.
-2. Validate the repo’s `repo-sync.yml` against the configured JSON schema.
-3. For each file entry, copy the source file to the destination path within the repo.
+1. Checks out each repo.
+2. Validates the repo’s `repo-sync.yml` against the configured JSON schema.
+3. For each file entry, copies the source file to the destination path within the repo.
     - If the source file has a `.tpl` extension, evaluate the the source file as a [text/template](https://pkg.go.dev/text/template) file using the [`tpl` CLI tool](https://github.com/bluebrown/go-template-cli).
     - The values from `repo-sync.yml` are available within the template.
     - Destination filenames may also use the template syntax.
-4. Commit and push the changes directly to each repo’s main branch.
+4. Commits and pushes the changes directly to each repo’s main branch.
+
+**When this action runs for a PR, it:**
+
+1. Syncs the repos as above, but in a `ci/repo-sync-preview-[PR_NUMBER]` branch, so you can preview the changes.
+2. Receives CI statuses from each repo and displays them as a comment on the PR (see [`repo-sync-preview.yml`](templates/gem/.github/workflows/repo-sync-preview.yml) and [`aggregate-preview-status.yml`](.github/workflows/aggregate-preview-status.yml)).
+
+Together, these should help you have confidence in your changes before you merge.
 
 ## Components
 
@@ -115,7 +122,8 @@ FILES: |
 
 The action runs on:
 
-- Pushes to the main branch
+- Pushes to the main branch (syncs directly to target repos)
+- Pull requests (creates preview branches for testing)
 - [Manual triggers](https://github.com/hanakai-rb/repo-sync/actions/workflows/repo-sync.yml)
 
 > [!NOTE]
@@ -131,6 +139,9 @@ The action runs on:
 | `TOKEN` | Yes | GitHub access token with "repo" scope, plus "workflow" scope if managing Actions-related files |
 | `GIT_EMAIL` | No | Git commit email (default committer is "github-actions[bot]") |
 | `GIT_USERNAME` | No | Git commit username (default committer is "github-actions[bot]") |
+| `PR_NUMBER` | No | Pull request number (automatically provided for PR events) |
+| `PR_EVENT_TYPE` | No | PR event type (automatically provided for PR events) |
+| `PREVIEW_BRANCH_PREFIX` | No | Prefix for preview branch names (default: `ci/repo-sync-preview`) |
 
 ### Template authoring
 

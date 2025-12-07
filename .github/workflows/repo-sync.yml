@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
 
 jobs:
@@ -14,6 +16,8 @@ jobs:
       - name: Sync
         uses: ./repo-sync-action
         with:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_EVENT_TYPE: ${{ github.event.action }}
           REPOSITORIES: |
             dry-rb/dry-auto_inject
             dry-rb/dry-cli
@@ -45,6 +49,7 @@ jobs:
             templates/gem/.github/SUPPORT.md=.github/SUPPORT.md
             templates/gem/.github/workflows/ci.yml.tpl=.github/workflows/ci.yml
             templates/gem/.github/workflows/rubocop.yml=.github/workflows/rubocop.yml
+            templates/gem/.github/workflows/repo-sync-preview.yml=.github/workflows/repo-sync-preview.yml
             templates/gem/.rspec=.rspec
             templates/gem/.rubocop.yml=.rubocop.yml
             templates/gem/CODE_OF_CONDUCT.md=CODE_OF_CONDUCT.md
