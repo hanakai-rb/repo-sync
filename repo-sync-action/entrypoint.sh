@@ -69,7 +69,7 @@ sync_repos() {
     validation_status=$?
     if [[ $validation_status -ne 0 ]]; then
       echo "ERROR: Invalid repo-sync.yml:"
-      echo "$validation_result" | sed 's/^/  /'
+      echo "$validation_result" | sed 's/^/  /' # Indent for clarity
 
       echo "⛔ **${repository}** (Invalid repo-sync.yml)" >> $GITHUB_STEP_SUMMARY
       echo "" >> $GITHUB_STEP_SUMMARY
@@ -199,11 +199,14 @@ cleanup_preview_branches() {
   done
 }
 
-if [[ -n "$PR_NUMBER" && "$PR_EVENT_TYPE" != "closed" ]]; then
+if [[ -n "$PR_NUMBER" ]]; then
+  PREVIEW_BRANCH="${PREVIEW_BRANCH_PREFIX}-${PR_NUMBER}"
+fi
+
+if [[ -n "$PREVIEW_BRANCH" && "$PR_EVENT_TYPE" != "closed" ]]; then
   echo "### 🔄 Sync summary" > $GITHUB_STEP_SUMMARY
   echo >> $GITHUB_STEP_SUMMARY
 
-  PREVIEW_BRANCH="${PREVIEW_BRANCH_PREFIX}-${PR_NUMBER}"
   echo "🔍 Creating preview branches: ${PREVIEW_BRANCH}"
   sync_repos "$PREVIEW_BRANCH"
 
@@ -212,10 +215,10 @@ if [[ -n "$PR_NUMBER" && "$PR_EVENT_TYPE" != "closed" ]]; then
   cat $GITHUB_STEP_SUMMARY >> $GITHUB_OUTPUT
   echo "EOF" >> $GITHUB_OUTPUT
 elif [[ -n "$PR_NUMBER" && "$PR_EVENT_TYPE" == "closed" ]]; then
-  PREVIEW_BRANCH="${PREVIEW_BRANCH_PREFIX}-${PR_NUMBER}"
   echo "🧹 Cleaning up preview branches"
   cleanup_preview_branches "$PREVIEW_BRANCH"
 else
+  # Main branch sync
   sync_repos ""
 fi
 
