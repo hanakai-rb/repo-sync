@@ -33,6 +33,18 @@ inputs:
     description: "Username to use for Git"
     required: false
     default: "github-actions[bot]"
+  PR_NUMBER:
+    description: "Pull request number (for preview branch creation)"
+    required: false
+    default: ""
+  PR_EVENT_TYPE:
+    description: "Pull request event type (opened, synchronize, closed, etc.)"
+    required: false
+    default: ""
+  PREVIEW_BRANCH_PREFIX:
+    description: "Prefix for preview branch names"
+    required: false
+    default: "ci/repo-sync-preview"
 
 runs:
   using: "docker"
