@@ -3,7 +3,7 @@
 [rubygem]: https://rubygems.org/gems/{{ .name.gem }}
 [actions]: https://github.com/{{ .github_org }}/{{ .name.gem }}/actions
 
-# {{ .name.gem }} [![Gem Version](https://badge.fury.io/rb/{{ .name.gem }}.svg)][rubygem] [![CI Status](https://github.com/{{ .github_org }}/{{ .name.gem }}/workflows/CI/badge.svg)][actions]
+# {{ .name.gem }} is really very super cool [![Gem Version](https://badge.fury.io/rb/{{ .name.gem }}.svg)][rubygem] [![CI Status](https://github.com/{{ .github_org }}/{{ .name.gem }}/workflows/CI/badge.svg)][actions]
 
 ## Links
 
