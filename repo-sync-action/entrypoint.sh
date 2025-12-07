@@ -1,10 +1,12 @@
 #!/bin/bash
 
+# Remember last error code
 STATUS=0
 trap 'STATUS=$?' ERR
 
 source /functions.sh
 
+# Prepare inputs
 REPOSITORIES=($INPUT_REPOSITORIES)
 mapfile -t FILES < <(echo "$INPUT_FILES" | grep -v '^$')
 REPO_SYNC_SCHEMA_PATH="${GITHUB_WORKSPACE}/${INPUT_REPO_SYNC_SCHEMA_PATH}"
@@ -44,6 +46,7 @@ sync_repos() {
 
     cd $REPO_PATH
 
+    # Check out branch for committing sync
     if [[ -n "$PREVIEW_BRANCH" ]]; then
       if create_preview_branch "$REPO_PATH" "$PREVIEW_BRANCH" "$DEFAULT_BRANCH_NAME"; then
         BRANCH_NAME="$PREVIEW_BRANCH"
@@ -61,6 +64,7 @@ sync_repos() {
       git fetch && git checkout -b "$BRANCH_NAME" origin/"$BRANCH_NAME" || git checkout -b "$BRANCH_NAME"
     fi
 
+    # Validate repo-sync.yml and handle failures
     validation_result=$(validate_repo_sync_yml "$REPO_PATH" "$REPO_SYNC_SCHEMA_PATH" 2>&1)
     validation_status=$?
     if [[ $validation_status -ne 0 ]]; then
@@ -80,6 +84,7 @@ sync_repos() {
       continue
     fi
 
+    # Sync files
     changed_files=()
     for file in "${FILES[@]}"; do
       synced_path=$(sync_file "$file" "$GITHUB_WORKSPACE" "$REPO_PATH")
@@ -97,6 +102,7 @@ sync_repos() {
 
     cd "$REPO_PATH"
     if [[ -n "$(git status --porcelain)" ]]; then
+      # Generate commit message with list of changed files
       commit_msg="File sync from ${GITHUB_REPOSITORY}\n\nUpdated files:\n\n"
       for file in "${changed_files[@]}"; do
         commit_msg+="- $file\n"
