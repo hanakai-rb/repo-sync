@@ -19,89 +19,148 @@ on:
         description: "Workflow run URL"
         required: true
 
-concurrency:
-  group: preview-status-${{ github.event.inputs.pr_number }}
-  cancel-in-progress: false
-
 permissions:
+  contents: write
   pull-requests: write
 
 jobs:
   update_comment:
     runs-on: ubuntu-latest
     steps:
-      - name: Build status table
-        id: build-table
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Write status to cache branch
+        run: |
+          PR_NUMBER="${{ github.event.inputs.pr_number }}"
+          REPO_NAME="${{ github.event.inputs.repo_name }}"
+          WORKFLOW_NAME="${{ github.event.inputs.workflow_name }}"
+          STATUS="${{ github.event.inputs.status }}"
+          RUN_URL="${{ github.event.inputs.run_url }}"
+
+          CACHE_BRANCH="internal/ci-status-preview-${PR_NUMBER}"
+          FILE_NAME=$(echo "${REPO_NAME}-${WORKFLOW_NAME}" | sed 's/[^a-zA-Z0-9]/-/g')
+          FILE_PATH=".ci-status-cache/${FILE_NAME}.json"
+
+          echo "Writing status for ${REPO_NAME} / ${WORKFLOW_NAME} to ${CACHE_BRANCH}:${FILE_PATH}"
+
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create or checkout cache branch
+          if git ls-remote --heads origin "${CACHE_BRANCH}" | grep -q "${CACHE_BRANCH}"; then
+            git fetch origin "${CACHE_BRANCH}"
+            git checkout "${CACHE_BRANCH}"
+          else
+            git checkout -b "${CACHE_BRANCH}"
+          fi
+
+          # Create directory and write status file
+          mkdir -p .ci-status-cache
+          cat > "${FILE_PATH}" <<EOF
+          {
+            "repo": "${REPO_NAME}",
+            "workflow": "${WORKFLOW_NAME}",
+            "status": "${STATUS}",
+            "url": "${RUN_URL}",
+            "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          }
+          EOF
+
+          # Commit and push with retry logic for race conditions
+          git add "${FILE_PATH}"
+          git commit -m "Update status: ${REPO_NAME} / ${WORKFLOW_NAME} = ${STATUS}"
+
+          MAX_RETRIES=5
+          for i in $(seq 1 $MAX_RETRIES); do
+            if git push origin "${CACHE_BRANCH}"; then
+              echo "Successfully pushed on attempt $i"
+              break
+            else
+              if [ $i -lt $MAX_RETRIES ]; then
+                echo "Push failed on attempt $i, retrying..."
+                sleep $i
+                git pull --rebase origin "${CACHE_BRANCH}"
+              else
+                echo "Failed to push after $MAX_RETRIES attempts"
+                exit 1
+              fi
+            fi
+          done
+
+      - name: Aggregate statuses
+        id: aggregate
         uses: actions/github-script@v7
         with:
           script: |
+            const fs = require("fs");
+            const path = require("path");
             const prNumber = context.payload.inputs.pr_number;
-            const repoName = context.payload.inputs.repo_name;
-            const workflowName = context.payload.inputs.workflow_name;
-            const status = context.payload.inputs.status;
-            const runUrl = context.payload.inputs.run_url;
 
-            const statusKey = `${repoName} / ${workflowName}`;
-            console.log(`Received status from ${statusKey}: ${status}`);
+            console.log("Aggregating statuses from .ci-status-cache/");
 
-            const comments = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber
-            });
+            // Check if directory exists
+            const cacheDir = ".ci-status-cache";
+            if (!fs.existsSync(cacheDir)) {
+              console.log("Cache directory not found");
+              core.setOutput("message", "");
+              core.setOutput("pr_number", prNumber);
+              return;
+            }
 
-            const COMMENT_TAG = "ci-status";
-            const botComment = comments.data.find(c =>
-              c.user.login === "github-actions[bot]" &&
-              c.body.includes(`<!-- comment-tag: ${COMMENT_TAG} -->`)
-            );
+            // Read all JSON files
+            const files = fs.readdirSync(cacheDir).filter(f => f.endsWith(".json"));
+            if (files.length === 0) {
+              console.log("No status files found");
+              core.setOutput("message", "");
+              core.setOutput("pr_number", prNumber);
+              return;
+            }
 
-            let statuses = {};
+            // Parse all status files
+            const statuses = {};
+            for (const file of files) {
+              try {
+                const content = fs.readFileSync(path.join(cacheDir, file), "utf8");
+                const statusData = JSON.parse(content);
 
-            if (botComment) {
-              const jsonMatch = botComment.body.match(/<!-- status-data: (.+?) -->/);
-              if (jsonMatch) {
-                try {
-                  statuses = JSON.parse(jsonMatch[1]);
-                } catch (e) {
-                  console.log("Failed to parse existing statuses, starting fresh");
-                }
+                const statusKey = `${statusData.repo} / ${statusData.workflow}`;
+
+                const statusEmoji = {
+                  "success": "✅",
+                  "failure": "❌"
+                };
+
+                statuses[statusKey] = {
+                  repo: statusData.repo,
+                  workflow: statusData.workflow,
+                  emoji: statusEmoji[statusData.status] || "⚠️",
+                  status: statusData.status,
+                  url: statusData.url
+                };
+              } catch (error) {
+                console.log(`Failed to read status file ${file}: ${error.message}`);
               }
             }
 
-            const statusEmoji = {
-              "success": "✅",
-              "failure": "❌"
-            };
-            const emoji = statusEmoji[status];
+            const sortedKeys = Object.keys(statuses).sort();
 
-            statuses[statusKey] = {
-              repo: repoName,
-              workflow: workflowName,
-              emoji: emoji,
-              status: status,
-              url: runUrl
-            };
-
-            const sortedRepos = Object.keys(statuses).sort();
-
-            let body = `<!-- status-data: ${JSON.stringify(statuses)} -->\n`;
-            body += "### 🔍 CI status\n\n";
-            body += "| Repo | Workflow |\n";
+            let body = "### 🔍 CI status\n\n";
+            body += "| Workflow | Status |\n";
             body += "|------|----------|\n";
-            for (const key of sortedRepos) {
+            for (const key of sortedKeys) {
               const { repo, workflow, emoji, status, url } = statuses[key];
-              const workflowText = emoji ? `${emoji} ${workflow}` : workflow;
-              body += `| **${repo}** | ${workflowText} · [${status}](${url}) |\n`;
+              body += `| **${repo}** · ${workflow} | ${emoji} [${status}](${url}) |\n`;
             }
 
             core.setOutput("message", body);
             core.setOutput("pr_number", prNumber);
 
       - name: Comment PR
+        if: steps.aggregate.outputs.message != ''
         uses: thollander/actions-comment-pull-request@v3
         with:
-          message: ${{ steps.build-table.outputs.message }}
-          pr-number: ${{ steps.build-table.outputs.pr_number }}
-          # Must match COMMENT_TAG in the script above
+          message: ${{ steps.aggregate.outputs.message }}
+          pr-number: ${{ steps.aggregate.outputs.pr_number }}
           comment-tag: ci-status
