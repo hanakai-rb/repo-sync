@@ -33,7 +33,7 @@ repo_sync:
 1. Checks out each repo.
 2. Validates the repo’s `repo-sync.yml` against the configured JSON schema.
 3. For each file entry, copies the source file to the destination path within the repo.
-    - If the source file has a `.tpl` extension, evaluate the the source file as a [text/template](https://pkg.go.dev/text/template) file using the [`tpl` CLI tool](https://github.com/bluebrown/go-template-cli).
+    - If the source file has a `.tpl` extension, evaluate the the source file as a [text/template](https://pkg.go.dev/text/template) file using the [`gomplate` CLI tool](https://gomplate.ca).
     - The values from `repo-sync.yml` are available within the template.
     - Destination filenames may also use the template syntax.
 4. Commits and pushes the changes directly to each repo’s main branch.
@@ -145,32 +145,31 @@ The action runs on:
 
 ### Template authoring
 
-Templates with `.tpl` extensions are are evaluated as Go [text/template](https://pkg.go.dev/text/template) files using the [`tpl` CLI tool](https://github.com/bluebrown/go-template-cli).
+Templates with `.tpl` extensions are are evaluated as Go [text/template](https://pkg.go.dev/text/template) files using the [`gomplate` CLI tool](https://gomplate.ca).
 
 [`templates/gem/gemspec.rb.tpl`](templates/gem/gemspec.rb.tpl) is our most complex template so far, and a helpful example of what’s possible:
 
 ```
 Gem::Specification.new do |spec|
   spec.name          = "{{ .name.gem }}"
-  spec.authors       = ["{{ join "\", \"" .gemspec.authors }}"]
-  spec.email         = ["{{ join "\", \"" .gemspec.email }}"]
+  spec.authors       = ["{{ join .gemspec.authors "\", \"" }}"]
+  spec.email         = ["{{ join .gemspec.email "\", \"" }}"]
   spec.license       = "MIT"
   spec.version       = {{ .name.constant }}::VERSION.dup
 
-  spec.summary = "{{ .gemspec.summary }}"
-  {{ if .gemspec.description -}}
-    spec.description = "{{ .gemspec.description }}"
-  {{ else -}}
-    spec.description = spec.summary
-  {{ end -}}
-  spec.homepage      = "https://dry-rb.org/gems/{{ .name.gem }}"
-  spec.files         = Dir["{{ join "\", \"" $file_globs }}"]
+  spec.summary       = "{{ .gemspec.summary }}"
+  {{ if .gemspec.description }}{{ if gt (len .gemspec.description) 100 }}spec.description   = <<~TEXT
+{{ .gemspec.description | strings.TrimSpace | strings.TrimSuffix "\n" | strings.Indent 4 }}
+  TEXT{{ else }}spec.description   = "{{ .gemspec.description }}"{{ end }}{{ else }}spec.description   = spec.summary{{ end }}
+  spec.homepage      = "{{ .gemspec.homepage }}"
+  spec.files         = Dir["{{ join $file_globs "\", \"" }}"]
   spec.bindir        = "bin"
-  {{ if eq (len (default (list) .gemspec.executables)) 0 -}}
+  {{ if eq (len (.gemspec.executables | default (coll.Slice))) 0 -}}
   spec.executables   = []
   {{ else -}}
-  spec.executables   = ["{{ join "\", \"" .gemspec.executables }}"]
+  spec.executables   = ["{{ join .gemspec.executables "\", \"" }}"]
   {{ end -}}
+  spec.require_paths = ["lib"]
 
   # ...
 end
@@ -190,8 +189,7 @@ gemspec:
 Functions like `if`, `eq`, `len`, `default`, `join`, etc. are available from:
 
 - [text/template’s built-in functions](https://pkg.go.dev/text/template#hdr-Functions)
-- [Sprig functions](https://masterminds.github.io/sprig/)
-- [Custom functions](https://github.com/bluebrown/go-template-cli/tree/main/textfunc) built into the `tpl` CLI itself
+- [Gomplate’s functions library](https://docs.gomplate.ca/functions/)
 
 ### Local Testing
 
