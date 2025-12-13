@@ -9,69 +9,66 @@ on:
   workflow_dispatch:
 
 jobs:
-  repo_sync:
-    runs-on: ubuntu-latest
-    permissions:
+  sync_dry:
+    permissions: &permissions
       contents: write
       pull-requests: write
-    steps:
-      - uses: actions/checkout@v2
-      - name: Sync
-        id: sync
-        uses: ./repo-sync-action
-        with:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_EVENT_TYPE: ${{ github.event.action }}
-          REPOSITORIES: |
-            dry-rb/dry-auto_inject
-            dry-rb/dry-cli
-            dry-rb/dry-configurable
-            dry-rb/dry-core
-            dry-rb/dry-effects
-            dry-rb/dry-events
-            dry-rb/dry-files
-            dry-rb/dry-inflector
-            dry-rb/dry-initializer
-            dry-rb/dry-logger
-            dry-rb/dry-logic
-            dry-rb/dry-matcher
-            dry-rb/dry-monads
-            dry-rb/dry-monitor
-            dry-rb/dry-operation
-            dry-rb/dry-rails
-            dry-rb/dry-schema
-            dry-rb/dry-struct
-            dry-rb/dry-system
-            dry-rb/dry-transaction
-            dry-rb/dry-transformer
-            dry-rb/dry-types
-            dry-rb/dry-validation
-          FILES: |
-            templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
-            templates/gem/.github/ISSUE_TEMPLATE/bug-report.md=.github/ISSUE_TEMPLATE/bug-report.md
-            templates/gem/.github/ISSUE_TEMPLATE/config.yml=.github/ISSUE_TEMPLATE/config.yml
-            templates/gem/.github/SUPPORT.md=.github/SUPPORT.md
-            templates/gem/.github/workflows/ci.yml.tpl=.github/workflows/ci.yml
-            templates/gem/.github/workflows/rubocop.yml=.github/workflows/rubocop.yml
-            templates/gem/.github/workflows/repo-sync-preview.yml=.github/workflows/repo-sync-preview.yml
-            templates/gem/.rspec=.rspec
-            templates/gem/.rubocop.yml=.rubocop.yml
-            templates/gem/CODE_OF_CONDUCT.md=CODE_OF_CONDUCT.md
-            templates/gem/CONTRIBUTING.md=CONTRIBUTING.md
-            templates/gem/Gemfile.devtools=Gemfile.devtools
-            templates/gem/LICENSE.tpl=LICENSE
-            templates/gem/README.md.tpl=README.md
-            templates/gem/gemspec.rb.tpl={{ .name.gem }}.gemspec
-            templates/gem/spec/support/coverage.rb=spec/support/coverage.rb
-            templates/gem/spec/support/rspec.rb=spec/support/rspec.rb
-            templates/gem/spec/support/warnings.rb=spec/support/warnings.rb
-          REPO_SYNC_SCHEMA_PATH: templates/repo-sync-schema.json
-          TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
-      - name: Comment
-        if: github.event.pull_request.number
-        uses: thollander/actions-comment-pull-request@v3
-        with:
-          message: ${{ steps.sync.outputs.SYNC_SUMMARY || '' }}
-          pr-number: ${{ github.event.pull_request.number }}
-          comment-tag: sync-summary
-          mode: ${{ github.event.action == 'closed' && 'delete' || 'upsert' }}
+    uses: ./.github/workflows/repo-sync-job.yml
+    secrets: inherit
+    with:
+      id: dry
+      repos: |
+        dry-rb/dry-auto_inject
+        dry-rb/dry-cli
+        dry-rb/dry-configurable
+        dry-rb/dry-core
+        dry-rb/dry-effects
+        dry-rb/dry-events
+        dry-rb/dry-files
+        dry-rb/dry-inflector
+        dry-rb/dry-initializer
+        dry-rb/dry-logger
+        dry-rb/dry-logic
+        dry-rb/dry-matcher
+        dry-rb/dry-monads
+        dry-rb/dry-monitor
+        dry-rb/dry-operation
+        dry-rb/dry-rails
+        dry-rb/dry-schema
+        dry-rb/dry-struct
+        dry-rb/dry-system
+        dry-rb/dry-transaction
+        dry-rb/dry-transformer
+        dry-rb/dry-types
+        dry-rb/dry-validation
+      files: |
+        templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
+        templates/gem/.github/ISSUE_TEMPLATE/bug-report.md=.github/ISSUE_TEMPLATE/bug-report.md
+        templates/gem/.github/ISSUE_TEMPLATE/config.yml=.github/ISSUE_TEMPLATE/config.yml
+        templates/gem/.github/SUPPORT.md=.github/SUPPORT.md
+        templates/gem/.github/workflows/ci.yml.tpl=.github/workflows/ci.yml
+        templates/gem/.github/workflows/rubocop.yml=.github/workflows/rubocop.yml
+        templates/gem/.github/workflows/repo-sync-preview.yml=.github/workflows/repo-sync-preview.yml
+        templates/gem/.rspec=.rspec
+        templates/gem/.rubocop.yml=.rubocop.yml
+        templates/gem/CODE_OF_CONDUCT.md=CODE_OF_CONDUCT.md
+        templates/gem/CONTRIBUTING.md=CONTRIBUTING.md
+        templates/gem/Gemfile.devtools=Gemfile.devtools
+        templates/gem/LICENSE.tpl=LICENSE
+        templates/gem/README.md.tpl=README.md
+        templates/gem/gemspec.rb.tpl={{ .name.gem }}.gemspec
+        templates/gem/spec/support/coverage.rb=spec/support/coverage.rb
+        templates/gem/spec/support/rspec.rb=spec/support/rspec.rb
+        templates/gem/spec/support/warnings.rb=spec/support/warnings.rb
+
+  sync_hanami:
+    permissions: *permissions
+    uses: ./.github/workflows/repo-sync-job.yml
+    secrets: inherit
+    with:
+      id: hanami
+      repos: |
+        hanami/hanami
+      files: |
+        templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
+        templates/gem/.github/SUPPORT.md=.github/SUPPORT.md
