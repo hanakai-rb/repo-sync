@@ -36,5 +36,5 @@ jobs:
         with:
           message: ${{ steps.sync.outputs.SYNC_SUMMARY || '' }}
           pr-number: ${{ github.event.pull_request.number }}
-          comment-tag: sync-summary
+          comment-tag: sync-summary-${{ hashFiles(inputs.repos) }}
           mode: ${{ github.event.action == 'closed' && 'delete' || 'upsert' }}
