@@ -1,0 +1,44 @@
+name: Repo sync job
+
+on:
+  workflow_call:
+    inputs:
+      repos:
+        description: List of repos to sync
+        required: true
+        type: string
+      files:
+        description: List of files to sync
+        required: true
+        type: string
+      id:
+        description: Identifier of the calling job
+        required: true
+        type: string
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v2
+      - name: Sync
+        id: sync
+        uses: ./repo-sync-action
+        with:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_EVENT_TYPE: ${{ github.event.action }}
+          REPOSITORIES: ${{ inputs.repos }}
+          FILES: ${{ inputs.files }}
+          REPO_SYNC_SCHEMA_PATH: templates/repo-sync-schema.json
+          TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
+      - name: Comment
+        if: github.event.pull_request.number
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          message: ${{ steps.sync.outputs.SYNC_SUMMARY || '' }}
+          pr-number: ${{ github.event.pull_request.number }}
+          comment-tag: sync-summary-${{ inputs.id }}
+          mode: ${{ github.event.action == 'closed' && 'delete' || 'upsert' }}
