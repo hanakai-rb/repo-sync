@@ -11,6 +11,10 @@ on:
         description: List of files to sync
         required: true
         type: string
+      id:
+        description: Identifier of the calling job
+        required: true
+        type: string
 
 jobs:
   sync:
@@ -36,5 +40,5 @@ jobs:
         with:
           message: ${{ steps.sync.outputs.SYNC_SUMMARY || '' }}
           pr-number: ${{ github.event.pull_request.number }}
-          comment-tag: sync-summary-${{ hashFiles(inputs.repos) }}
+          comment-tag: sync-summary-${{ inputs.id }}
           mode: ${{ github.event.action == 'closed' && 'delete' || 'upsert' }}

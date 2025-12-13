@@ -15,6 +15,7 @@ jobs:
       pull-requests: write
     uses: ./.github/workflows/repo-sync-job.yml
     with:
+      id: dry
       repos: |
         dry-rb/dry-auto_inject
         dry-rb/dry-cli
@@ -63,6 +64,7 @@ jobs:
     permissions: *permissions
     uses: ./.github/workflows/repo-sync-job.yml
     with:
+      id: hanami
       repos: |
         hanami/hanami
       files: |
