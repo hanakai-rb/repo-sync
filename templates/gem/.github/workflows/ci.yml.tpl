@@ -6,6 +6,19 @@
     {{ $ruby_versions = $ruby_versions | coll.Append . -}}
   {{ end -}}
 {{ end -}}
+{{ $default_ruby := index $ruby_versions 0 -}}
+{{ $optional_rubies := coll.Slice
+  "jruby"
+  "4.0.0-preview2"
+-}}
+{{/* Normalize ci.matrix into a dict so we can safely iterate over it later */ -}}
+{{ $matrix_dimensions := dict -}}
+{{ if and .ci .ci.matrix -}}
+  {{ range $key, $values := .ci.matrix -}}
+    {{ $matrix_dimensions = merge $matrix_dimensions (dict $key $values) -}}
+  {{ end -}}
+{{ end -}}
+{{ $has_matrix := gt (len $matrix_dimensions) 0 -}}
 name: CI
 
 on:
@@ -19,38 +32,87 @@ on:
 
 jobs:
   tests:
-    name: Tests ({{ print "${{" }} matrix.ruby }})
+    name: Tests (Ruby {{ print "${{" }} matrix.ruby }}{{ if $has_matrix }}{{ range $key, $values := $matrix_dimensions }}, {{ strings.Title $key }} {{ print "${{" }} matrix.{{ $key }} }}{{ end }}{{ end }})
     permissions:
       pull-requests: write
     runs-on: ubuntu-latest
-    continue-on-error: {{ print "${{" }} matrix.optional }}
+    continue-on-error: {{ print "${{" }} matrix.optional || false }}
     strategy:
       fail-fast: false
       matrix:
         ruby:
-        {{ range $ruby_versions -}}
-        - "{{ . }}"
-        {{ end -}}
-        optional: [false]
+        {{- range $ruby_versions }}
+          - "{{ . }}"
+        {{- end }}
+        {{- if $has_matrix }}
+        {{- range $key, $values := $matrix_dimensions }}
+        {{ $key }}:
+        {{- range $values }}
+          - "{{ . }}"
+        {{- end }}
+        {{- end }}
+        {{- end }}
         include:
-          - ruby: "3.4"
+          {{- if $has_matrix }}
+          {{/* Repos WITH matrix dimensions */ -}}
+          {{/* Coverage on one job only: default ruby + first value of each dimension */ -}}
+          - ruby: "{{ $default_ruby }}"
+          {{- range $dim_key, $dim_values := $matrix_dimensions }}
+            {{ $dim_key }}: {{ index $dim_values 0 | quote }}
+          {{- end }}
             coverage: "true"
-          - ruby: "jruby"
+          {{- /* Optional rubies: create jobs for each ruby and each dimension combination */ -}}
+          {{- range $optional_ruby := $optional_rubies }}
+          {{- range $dim_key, $dim_values := $matrix_dimensions }}
+          {{- range $dim_values }}
+          - ruby: "{{ $optional_ruby }}"
+            {{ $dim_key }}: {{ . | quote }}
             optional: true
-          - ruby: "4.0.0-preview2"
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- else }}
+          {{/* Repos WITHOUT matrix dimensions */ -}}
+          {{/* Coverage: just the default ruby */ -}}
+          - ruby: "{{ $default_ruby }}"
+            coverage: "true"
+          {{- /* Optional rubies: just a simple list */ -}}
+          {{- range $optional_rubies }}
+          - ruby: "{{ . }}"
             optional: true
+          {{- end }}
+          {{- end }}
     env:
-      COVERAGE: {{ print "${{" }}matrix.coverage}}
+      COVERAGE: {{ print "${{" }} matrix.coverage }}
+      {{- if $has_matrix }}
+      {{- range $key, $values := $matrix_dimensions }}
+      {{ strings.ToUpper $key }}_MATRIX_VALUE: {{ print "${{" }} matrix.{{ $key }} || '' }}
+      {{- end }}
+      {{- end }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install package dependencies
         run: "[ -e $APT_DEPS ] || sudo apt-get install -y --no-install-recommends $APT_DEPS"
+      {{ if and .ci .ci.node -}}
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Install dependencies
+        run: npm install
+      {{ end -}}
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: {{ print "${{" }}matrix.ruby}}
+          ruby-version: {{ print "${{" }} matrix.ruby }}
           bundler-cache: true
+        {{- if $has_matrix }}
+        env:
+          {{- range $key, $values := $matrix_dimensions }}
+          {{ strings.ToUpper $key }}_MATRIX_VALUE: {{ print "${{" }} matrix.{{ $key }} || '' }}
+          {{- end }}
+        {{- end }}
       - name: Run all tests
         id: test
         run: |
@@ -63,6 +125,12 @@ jobs:
             exit 0  # Ignore error here to keep the green checkmark
           fi
           exit ${status}
+        {{- if $has_matrix }}
+        env:
+          {{- range $key, $values := $matrix_dimensions }}
+          {{ strings.ToUpper $key }}_MATRIX_VALUE: {{ print "${{" }} matrix.{{ $key }} || '' }}
+          {{- end }}
+        {{- end }}
       - name: Add comment for optional failures
         uses: thollander/actions-comment-pull-request@v3
         if: {{ print "${{" }} matrix.optional && github.event.pull_request }}
@@ -79,6 +147,8 @@ jobs:
       actions: write
     steps:
       - uses: liskin/gh-workflow-keepalive@v1
+  {{- if eq .github_org "dry-rb" }}
+
   release:
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
@@ -100,3 +170,4 @@ jobs:
         run: |
           tag=$(echo $GITHUB_REF | cut -d / -f 3)
           ossy gh w dry-rb/devtools release --payload "{\"tag\":\"$tag\",\"sha\":\"{{ print "${{" }}github.sha}}\",\"tag_creator\":\"$GITHUB_ACTOR\",\"repo\":\"$GITHUB_REPOSITORY\",\"repo_name\":\"{{ print "${{" }}github.event.repository.name}}\"}"
+  {{ end }}
