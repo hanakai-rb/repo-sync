@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-matcher",
   "workflow": "CI",
-  "status": "success",
-  "url": "https://github.com/dry-rb/dry-matcher/actions/runs/20202567975",
-  "timestamp": "2025-12-14T04:22:55Z"
+  "status": "failure",
+  "url": "https://github.com/dry-rb/dry-matcher/actions/runs/20202619666",
+  "timestamp": "2025-12-14T04:24:45Z"
 }
