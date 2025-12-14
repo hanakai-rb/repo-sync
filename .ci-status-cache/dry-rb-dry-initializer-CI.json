@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-initializer",
   "workflow": "CI",
-  "status": "success",
-  "url": "https://github.com/dry-rb/dry-initializer/actions/runs/20202566593",
-  "timestamp": "2025-12-14T04:23:16Z"
+  "status": "failure",
+  "url": "https://github.com/dry-rb/dry-initializer/actions/runs/20202618367",
+  "timestamp": "2025-12-14T04:24:40Z"
 }
