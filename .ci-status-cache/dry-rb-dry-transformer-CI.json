@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-transformer",
   "workflow": "CI",
-  "status": "success",
-  "url": "https://github.com/dry-rb/dry-transformer/actions/runs/20202572469",
-  "timestamp": "2025-12-14T04:24:12Z"
+  "status": "failure",
+  "url": "https://github.com/dry-rb/dry-transformer/actions/runs/20202625226",
+  "timestamp": "2025-12-14T04:25:13Z"
 }
