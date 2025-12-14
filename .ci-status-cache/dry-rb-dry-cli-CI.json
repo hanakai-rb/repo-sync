@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-cli",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-cli/actions/runs/20202616042",
-  "timestamp": "2025-12-14T04:24:18Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-cli/actions/runs/20202654913",
+  "timestamp": "2025-12-14T04:30:24Z"
 }
