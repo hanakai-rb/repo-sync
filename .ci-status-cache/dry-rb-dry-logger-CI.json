@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-logger",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-logger/actions/runs/20202618771",
-  "timestamp": "2025-12-14T04:24:41Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-logger/actions/runs/20202656845",
+  "timestamp": "2025-12-14T04:30:31Z"
 }
