@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-events",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-events/actions/runs/20202617509",
-  "timestamp": "2025-12-14T04:24:28Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-events/actions/runs/20202655869",
+  "timestamp": "2025-12-14T04:30:26Z"
 }
