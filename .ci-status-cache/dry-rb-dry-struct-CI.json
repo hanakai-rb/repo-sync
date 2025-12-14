@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-struct",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-struct/actions/runs/20202623273",
-  "timestamp": "2025-12-14T04:25:03Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-struct/actions/runs/20202659639",
+  "timestamp": "2025-12-14T04:30:54Z"
 }
