@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-files",
   "workflow": "CI",
-  "status": "success",
-  "url": "https://github.com/dry-rb/dry-files/actions/runs/20202500227",
-  "timestamp": "2025-12-14T04:16:58Z"
+  "status": "failure",
+  "url": "https://github.com/dry-rb/dry-files/actions/runs/20202565538",
+  "timestamp": "2025-12-14T04:23:18Z"
 }
