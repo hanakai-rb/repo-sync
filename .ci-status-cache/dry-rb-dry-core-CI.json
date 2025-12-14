@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-core",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-core/actions/runs/20202444135",
-  "timestamp": "2025-12-14T04:12:28Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-core/actions/runs/20202499245",
+  "timestamp": "2025-12-14T04:15:42Z"
 }
