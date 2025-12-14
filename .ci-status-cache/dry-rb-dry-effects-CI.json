@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-effects",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-effects/actions/runs/20202444589",
-  "timestamp": "2025-12-14T04:11:43Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-effects/actions/runs/20202499624",
+  "timestamp": "2025-12-14T04:15:48Z"
 }
