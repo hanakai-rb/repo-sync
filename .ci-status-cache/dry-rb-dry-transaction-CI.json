@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-transaction",
   "workflow": "CI",
-  "status": "success",
-  "url": "https://github.com/dry-rb/dry-transaction/actions/runs/20202572001",
-  "timestamp": "2025-12-14T04:23:33Z"
+  "status": "failure",
+  "url": "https://github.com/dry-rb/dry-transaction/actions/runs/20202624621",
+  "timestamp": "2025-12-14T04:25:09Z"
 }
