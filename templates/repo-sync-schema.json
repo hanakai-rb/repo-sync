@@ -30,6 +30,20 @@
             "type": "string"
           },
           "description": "Additional Ruby versions to test against"
+        },
+        "matrix": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": "Additional matrix dimensions (e.g., rack versions). Each key becomes a matrix dimension with the array as its values."
+        },
+        "node": {
+          "type": "boolean",
+          "description": "Enable Node.js setup steps"
         }
       }
     },

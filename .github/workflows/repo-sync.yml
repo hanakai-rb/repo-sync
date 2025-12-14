@@ -70,5 +70,7 @@ jobs:
       repos: |
         hanami/hanami
       files: |
+        templates/gem/.github/workflows/ci.yml.tpl=.github/workflows/ci.yml
+        templates/gem/.github/workflows/repo-sync-preview.yml=.github/workflows/repo-sync-preview.yml
         templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
         templates/gem/.github/SUPPORT.md=.github/SUPPORT.md
