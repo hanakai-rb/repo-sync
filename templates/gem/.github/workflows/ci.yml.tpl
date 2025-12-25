@@ -1,6 +1,6 @@
 # This file is synced from hanakai-rb/repo-sync
 
-{{ $ruby_versions := coll.Slice "3.4" "3.3" "3.2" -}}
+{{ $ruby_versions := coll.Slice "4.0" "3.4" "3.3" "3.2" -}}
 {{ if and .ci .ci.rubies -}}
   {{ range .ci.rubies -}}
     {{ $ruby_versions = $ruby_versions | coll.Append . -}}
@@ -9,7 +9,6 @@
 {{ $default_ruby := index $ruby_versions 0 -}}
 {{ $optional_rubies := coll.Slice
   "jruby"
-  "4.0.0-preview2"
 -}}
 {{/* Normalize ci.matrix into a dict so we can safely iterate over it later */ -}}
 {{ $matrix_dimensions := dict -}}
