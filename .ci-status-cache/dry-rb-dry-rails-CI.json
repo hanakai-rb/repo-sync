@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-rails",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-rails/actions/runs/20537889025",
-  "timestamp": "2025-12-27T10:31:11Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-rails/actions/runs/20537922304",
+  "timestamp": "2025-12-27T10:36:20Z"
 }
