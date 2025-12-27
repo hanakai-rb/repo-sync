@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-auto_inject",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-auto_inject/actions/runs/20537884069",
-  "timestamp": "2025-12-27T10:30:27Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-auto_inject/actions/runs/20537918045",
+  "timestamp": "2025-12-27T10:35:34Z"
 }
