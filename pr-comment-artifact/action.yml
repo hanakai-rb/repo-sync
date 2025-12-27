@@ -1,0 +1,41 @@
+name: Create PR comment artifact
+description: Creates an artifact to post a PR comment via the centralized post-pr-comments workflow.
+
+inputs:
+  name:
+    description: Name for the artifact (will be prefixed with "pr-comment-")
+    required: true
+  pr-number:
+    description: The pull request number
+    required: true
+  message:
+    description: The comment message body
+    required: true
+  comment-tag:
+    description: Unique tag for upserting/deleting comments
+    required: true
+  mode:
+    description: Either "upsert" or "delete"
+    required: false
+    default: upsert
+
+runs:
+  using: composite
+  steps:
+    - name: Prepare comment artifact
+      shell: bash
+      run: |
+        echo "${{ inputs.pr-number }}" > pr-number.txt
+        echo "${{ inputs.comment-tag }}" > comment-tag.txt
+        echo "${{ inputs.mode }}" > mode.txt
+        echo "${{ inputs.message }}" > message.txt
+
+    - name: Upload comment artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: pr-comment-${{ inputs.name }}
+        path: |
+          pr-number.txt
+          comment-tag.txt
+          mode.txt
+          message.txt

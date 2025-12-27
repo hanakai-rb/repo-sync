@@ -32,8 +32,6 @@ on:
 jobs:
   tests:
     name: Tests (Ruby {{ print "${{" }} matrix.ruby }}{{ if $has_matrix }}{{ range $key, $values := $matrix_dimensions }}, {{ strings.Title $key }} {{ print "${{" }} matrix.{{ $key }} }}{{ end }}{{ end }})
-    permissions:
-      pull-requests: write
     runs-on: ubuntu-latest
     continue-on-error: {{ print "${{" }} matrix.optional || false }}
     strategy:
@@ -130,13 +128,14 @@ jobs:
           {{ strings.ToUpper $key }}_MATRIX_VALUE: {{ print "${{" }} matrix.{{ $key }} || '' }}
           {{- end }}
         {{- end }}
-      - name: Add comment for optional failures
-        uses: thollander/actions-comment-pull-request@v3
+      - name: Create optional failure comment
         if: {{ print "${{" }} matrix.optional && github.event.pull_request }}
+        uses: hanakai-rb/repo-sync/pr-comment-artifact@main
         with:
-          comment-tag: "{{ print "${{" }} matrix.ruby }}-optional-failure-notice"
-          message: |
-            ℹ️ Optional job failed: Ruby {{ print "${{" }} matrix.ruby }}
+          name: ci-ruby-{{ print "${{" }} matrix.ruby }}
+          pr-number: {{ print "${{" }} github.event.pull_request.number }}
+          comment-tag: ruby-{{ print "${{" }} matrix.ruby }}-optional-failure
+          message: "ℹ️ Optional job failed: Ruby {{ print "${{" }} matrix.ruby }}"
           mode: {{ print "${{" }} steps.test.outputs.optional_fail == 'true' && 'upsert' || 'delete' }}
 
   workflow-keepalive:
