@@ -1,0 +1,89 @@
+# Posts PR comments from artifacts created by completed workflows.
+#
+# This action is designed to work with the workflow_run trigger, allowing workflows that run with
+# read-only permissions (e.g., on fork PRs) to queue comments via artifacts, which are then posted
+# by a privileged workflow running in the base repo context.
+#
+# Expected artifact structure:
+#
+#   - Artifacts must be named "pr-comment-*"
+#   - Each artifact must contain:
+#     - pr-number.txt: The PR number (required)
+#     - message.txt: The comment body (required)
+#     - comment-tag.txt: Unique tag for upserting/deleting comments (optional)
+#     - mode.txt: Either "upsert" (default) or "delete" (optional)
+
+name: Post PR comments from artifacts
+description: Downloads comment artifacts from a workflow run and posts them to pull requests.
+
+inputs:
+  workflow-run-id:
+    description: The workflow run ID to download artifacts from
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Download artifacts and post comments
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require("fs");
+          const path = require("path");
+          const {owner, repo} = context.repo;
+
+          const readFile = (p) => {
+            return fs.existsSync(p) ? fs.readFileSync(p, "utf8").trim() : null;
+          };
+
+          const findComment = (comments, tag) => {
+            return comments.find(c => c.body?.includes(`<!-- pr-comment-tag: ${tag} -->`));
+          };
+
+          // Download and extract artifacts
+          const {data: {artifacts}} = await github.rest.actions.listWorkflowRunArtifacts({
+            owner, repo, run_id: ${{ inputs.workflow-run-id }},
+          });
+
+          const commentsDir = "pr-comments";
+          fs.mkdirSync(commentsDir, {recursive: true});
+
+          for (const artifact of artifacts.filter(a => a.name.startsWith("pr-comment-"))) {
+            const {data} = await github.rest.actions.downloadArtifact({
+              owner, repo, artifact_id: artifact.id, archive_format: "zip",
+            });
+            const zipPath = path.join(commentsDir, `${artifact.name}.zip`);
+            fs.writeFileSync(zipPath, Buffer.from(data));
+            const extractDir = path.join(commentsDir, artifact.name);
+            fs.mkdirSync(extractDir, {recursive: true});
+            await exec.exec("unzip", ["-q", zipPath, "-d", extractDir]);
+          }
+
+          // Process comments
+          const dirs = fs.readdirSync(commentsDir, {withFileTypes: true})
+            .filter(d => d.isDirectory()).map(d => d.name);
+
+          for (const dir of dirs) {
+            const base = path.join(commentsDir, dir);
+            const prNumber = parseInt(readFile(path.join(base, "pr-number.txt")));
+            const message = readFile(path.join(base, "message.txt"));
+
+            if (!prNumber || !message) continue;
+
+            const tag = readFile(path.join(base, "comment-tag.txt"));
+            const mode = readFile(path.join(base, "mode.txt")) || "upsert";
+
+            const {data: comments} = await github.rest.issues.listComments({owner, repo, issue_number: prNumber});
+            const existing = tag ? findComment(comments, tag) : null;
+
+            if (mode === "delete" && existing) {
+              await github.rest.issues.deleteComment({owner, repo, comment_id: existing.id});
+            } else {
+              const body = tag ? `<!-- pr-comment-tag: ${tag} -->\n${message}` : message;
+              if (existing) {
+                await github.rest.issues.updateComment({owner, repo, comment_id: existing.id, body});
+              } else {
+                await github.rest.issues.createComment({owner, repo, issue_number: prNumber, body});
+              }
+            }
+          }
