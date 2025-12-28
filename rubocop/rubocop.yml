@@ -1,7 +1,7 @@
 # Please keep config grouped and ordered alphabetically.
 
 AllCops:
-  TargetRubyVersion: 3.2
+  TargetRubyVersion: 3.3
   DisplayCopNames: true
   DisplayStyleGuide: true
   ExtraDetails: false
