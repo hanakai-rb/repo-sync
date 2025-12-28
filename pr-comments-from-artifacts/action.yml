@@ -76,8 +76,10 @@ runs:
             const {data: comments} = await github.rest.issues.listComments({owner, repo, issue_number: prNumber});
             const existing = tag ? findComment(comments, tag) : null;
 
-            if (mode === "delete" && existing) {
-              await github.rest.issues.deleteComment({owner, repo, comment_id: existing.id});
+            if (mode === "delete") {
+              if (existing) {
+                await github.rest.issues.deleteComment({owner, repo, comment_id: existing.id});
+              }
             } else {
               const body = tag ? `<!-- pr-comment-tag: ${tag} -->\n${message}` : message;
               if (existing) {
