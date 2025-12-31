@@ -18,6 +18,11 @@
   {{ end -}}
 {{ end -}}
 {{ $has_matrix := gt (len $matrix_dimensions) 0 -}}
+{{/* Gems using the new release-machine workflow */ -}}
+{{ $release_machine_gems := coll.Slice
+  "dry-cli"
+-}}
+{{ $use_release_machine := has $release_machine_gems .name.gem -}}
 name: CI
 
 on:
@@ -145,7 +150,39 @@ jobs:
       actions: write
     steps:
       - uses: liskin/gh-workflow-keepalive@v1
-  {{- if eq .github_org "dry-rb" }}
+  {{- if $use_release_machine }}
+
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    needs: tests
+    steps:
+      - name: Trigger release workflow
+        uses: actions/github-script@v7
+        with:
+          github-token: {{ print "${{" }} secrets.RELEASE_MACHINE_WORKFLOW_DISPATCH_TOKEN }}
+          script: |
+            const tag = context.ref.replace("refs/tags/", "");
+            const repo = context.repo.owner + "/" + context.repo.repo;
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner: "hanakai-rb",
+              repo: "release-machine",
+              workflow_id: "release.yml",
+              ref: "main",
+              inputs: {
+                repo: repo,
+                tag: tag
+              }
+            });
+
+            const workflowUrl = "https://github.com/hanakai-rb/release-machine/actions/workflows/release.yml";
+            await core.summary
+              .addHeading("Release Triggered")
+              .addRaw(`Triggered release workflow for <code>${tag}</code>`)
+              .addLink("View release workflow", workflowUrl)
+              .write();
+  {{- else if eq .github_org "dry-rb" }}
 
   release:
     runs-on: ubuntu-latest
