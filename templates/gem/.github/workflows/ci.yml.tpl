@@ -24,6 +24,7 @@
 -}}
 {{ $use_release_machine := has $release_machine_gems .name.gem -}}
 name: CI
+run-name: {{ print "${{" }} github.ref_type == 'tag' && format('Release {0}', github.ref_name) || 'CI' }}
 
 on:
   push:
