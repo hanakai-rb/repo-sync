@@ -189,6 +189,34 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
     needs: tests
+    {{- if $use_release_machine }}
+    steps:
+      - name: Trigger release workflow
+        uses: actions/github-script@v7
+        with:
+          github-token: {{ print "${{" }} secrets.RELEASE_MACHINE_WORKFLOW_DISPATCH_TOKEN }}
+          script: |
+            const tag = context.ref.replace("refs/tags/", "");
+            const repo = context.repo.owner + "/" + context.repo.repo;
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner: "hanakai-rb",
+              repo: "release-machine",
+              workflow_id: "release.yml",
+              ref: "main",
+              inputs: {
+                repo: repo,
+                tag: tag
+              }
+            });
+
+            const workflowUrl = "https://github.com/hanakai-rb/release-machine/actions/workflows/release.yml";
+            await core.summary
+              .addHeading("Release")
+              .addRaw(`Triggered release workflow for <code>${tag}</code>`)
+              .addLink("View release workflow", workflowUrl)
+              .write();
+    {{- else }}
     env:
       GITHUB_LOGIN: dry-bot
       GITHUB_TOKEN: {{ print "${{" }}secrets.GH_PAT}}
@@ -206,4 +234,5 @@ jobs:
         run: |
           tag=$(echo $GITHUB_REF | cut -d / -f 3)
           ossy gh w dry-rb/devtools release --payload "{\"tag\":\"$tag\",\"sha\":\"{{ print "${{" }}github.sha}}\",\"tag_creator\":\"$GITHUB_ACTOR\",\"repo\":\"$GITHUB_REPOSITORY\",\"repo_name\":\"{{ print "${{" }}github.event.repository.name}}\"}"
+    {{- end }}
   {{ end }}
