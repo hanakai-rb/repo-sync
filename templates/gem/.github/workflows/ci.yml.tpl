@@ -19,6 +19,7 @@
 {{ end -}}
 {{ $has_matrix := gt (len $matrix_dimensions) 0 -}}
 name: CI
+run-name: {{ print "${{" }} github.ref_type == 'tag' && format('Release {0}', github.ref_name) || 'CI' }}
 
 on:
   push:
