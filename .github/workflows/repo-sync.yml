@@ -76,3 +76,4 @@ jobs:
         templates/gem/.github/workflows/repo-sync-preview.yml=.github/workflows/repo-sync-preview.yml
         templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
         templates/gem/.github/SUPPORT.md=.github/SUPPORT.md
+        templates/gem/README.md.tpl=README.md
