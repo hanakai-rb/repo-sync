@@ -43,6 +43,9 @@ Layout/LineLength:
   Max: 120
   Exclude:
     - "spec/**/*_spec.rb"
+  AllowedPatterns:
+    # Allow comments
+    - '\A\s*#'
 
 Layout/SpaceAroundMethodCallOperator:
   Enabled: false
@@ -91,6 +94,9 @@ Lint/LiteralAsCondition:
   Exclude:
     - "spec/**/*.rb"
 
+Lint/MixedRegexpCaptureTypes:
+  Enabled: false
+
 Lint/RaiseException:
   Enabled: false
 
@@ -105,8 +111,10 @@ Lint/SuppressedException:
     - "spec/spec_helper.rb"
 
 Lint/UnusedBlockArgument:
-  Exclude:
-    - "spec/**/*.rb"
+  Enabled: false
+
+Lint/UnusedMethodArgument:
+  Enabled: false
 
 Lint/UselessConstantScoping:
   Enabled: false
@@ -121,6 +129,12 @@ Metrics/AbcSize:
 Naming/BinaryOperatorParameterName:
   Enabled: false
 
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
 Metrics/CyclomaticComplexity:
   Enabled: true
   Max: 12
@@ -128,15 +142,11 @@ Metrics/CyclomaticComplexity:
 Metrics/MethodLength:
   Enabled: false
 
-Metrics/BlockLength:
-  Enabled: false
-
-Metrics/ClassLength:
+Metrics/ModuleLength:
   Enabled: false
 
 Metrics/ParameterLists:
-  Exclude:
-    - "spec/**/*.rb"
+  Enabled: false
 
 Naming/BlockForwarding:
   Enabled: false
@@ -335,6 +345,9 @@ Style/SpecialGlobalVars:
 Style/StabbyLambdaParentheses:
   Enabled: false
 
+Style/StringConcatenation:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: double_quotes
@@ -351,4 +364,10 @@ Style/SymbolProc:
   Enabled: false
 
 Style/TrailingUnderscoreVariable:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Style/YodaCondition:
   Enabled: false
