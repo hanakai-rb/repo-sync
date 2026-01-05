@@ -29,11 +29,12 @@ runs:
         echo "${{ inputs.comment-tag }}" > comment-tag.txt
         echo "${{ inputs.mode }}" > mode.txt
         echo "${{ inputs.message }}" > message.txt
+        echo "artifact_id=$(date +%s%N)-$$" >> $GITHUB_ENV
 
     - name: Upload comment artifact
       uses: actions/upload-artifact@v4
       with:
-        name: pr-comment-${{ inputs.name }}
+        name: pr-comment-${{ inputs.name }}-${{ env.artifact_id }}
         path: |
           pr-number.txt
           comment-tag.txt
