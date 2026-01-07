@@ -83,6 +83,7 @@ jobs:
         templates/gem/CODE_OF_CONDUCT.md=CODE_OF_CONDUCT.md
         templates/gem/CONTRIBUTING.md=CONTRIBUTING.md
         templates/gem/Gemfile.devtools=Gemfile.devtools
+        templates/gem/gemspec.rb.tpl={{ .name.gem }}.gemspec
         templates/gem/LICENSE=LICENSE
         templates/gem/README.md.tpl=README.md
         templates/gem/spec/support/coverage.rb=spec/support/coverage.rb
