@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-inflector",
   "workflow": "RuboCop",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-inflector/actions/runs/20748851106",
-  "timestamp": "2026-01-06T12:54:31Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-inflector/actions/runs/20778643466",
+  "timestamp": "2026-01-07T10:38:13Z"
 }
