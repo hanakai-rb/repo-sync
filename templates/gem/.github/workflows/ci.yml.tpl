@@ -92,6 +92,15 @@ jobs:
       {{ strings.ToUpper $key }}_MATRIX_VALUE: {{ print "${{" }} matrix.{{ $key }} || '' }}
       {{- end }}
       {{- end }}
+      {{- if file.Exists ".github/workflows/repo-sync-extensions/ci-env.yml" }}
+      # Env below included from ./repo-sync-extensions/ci-env.yml
+{{ file.Read ".github/workflows/repo-sync-extensions/ci-env.yml" | strings.TrimSpace | strings.Indent 6 }}
+      {{- end }}
+    {{- if file.Exists ".github/workflows/repo-sync-extensions/ci-services.yml" }}
+    # Services included from ./repo-sync-extensions/ci-services.yml
+    services:
+{{ file.Read ".github/workflows/repo-sync-extensions/ci-services.yml" | strings.TrimSpace | strings.Indent 6 }}
+    {{- end }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
