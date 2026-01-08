@@ -21,6 +21,9 @@
 {{/* Gems using the new release-machine workflow */ -}}
 {{ $release_machine_gems := coll.Slice
   "dry-cli"
+  "dry-inflector"
+  "dry-schema"
+  "dry-types"
 -}}
 {{ $use_release_machine := has $release_machine_gems .name.gem -}}
 name: CI
