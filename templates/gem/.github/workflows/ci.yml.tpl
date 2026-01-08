@@ -92,6 +92,10 @@ jobs:
       {{ strings.ToUpper $key }}_MATRIX_VALUE: {{ print "${{" }} matrix.{{ $key }} || '' }}
       {{- end }}
       {{- end }}
+      {{- if file.Exists ".github/workflows/repo-sync-extensions/ci-job-env.yml" }}
+      # Env below included from ./repo-sync-extensions/ci-job-env.yml
+      {{- file.Read ".github/workflows/repo-sync-extensions/ci-job-env.yml" | strings.TrimSpace | strings.Indent 6 }}
+      {{- end }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -143,6 +147,11 @@ jobs:
           comment-tag: ruby-{{ print "${{" }} matrix.ruby }}-optional-failure
           message: "ℹ️ Optional job failed: Ruby {{ print "${{" }} matrix.ruby }}"
           mode: {{ print "${{" }} steps.test.outputs.optional_fail == 'true' && 'upsert' || 'delete' }}
+    {{- if file.Exists ".github/workflows/repo-sync-extensions/ci-services.yml" }}
+    # Services included from ./repo-sync-extensions/ci-services.yml
+    services:
+      {{- file.Read ".github/workflows/repo-sync-extensions/ci-services.yml" | strings.TrimSpace | strings.Indent 6 }}
+    {{- end }}
 
   workflow-keepalive:
     if: github.event_name == 'schedule'
