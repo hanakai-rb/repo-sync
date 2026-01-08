@@ -99,7 +99,7 @@ jobs:
     {{- if file.Exists ".github/workflows/repo-sync-extensions/ci-services.yml" }}
     # Services included from ./repo-sync-extensions/ci-services.yml
     services:
-{{- file.Read ".github/workflows/repo-sync-extensions/ci-services.yml" | strings.TrimSpace | strings.Indent 6 }}
+{{ file.Read ".github/workflows/repo-sync-extensions/ci-services.yml" | strings.TrimSpace | strings.Indent 6 }}
     {{- end }}
     steps:
       - name: Checkout
