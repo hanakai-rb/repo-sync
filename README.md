@@ -164,12 +164,6 @@ Gem::Specification.new do |spec|
   spec.homepage      = "{{ .gemspec.homepage }}"
   spec.files         = Dir["{{ join $file_globs "\", \"" }}"]
   spec.bindir        = "bin"
-  {{ if eq (len (.gemspec.executables | default (coll.Slice))) 0 -}}
-  spec.executables   = []
-  {{ else -}}
-  spec.executables   = ["{{ join .gemspec.executables "\", \"" }}"]
-  {{ end -}}
-  spec.require_paths = ["lib"]
 
   # ...
 end
