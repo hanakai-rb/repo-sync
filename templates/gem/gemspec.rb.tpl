@@ -23,12 +23,8 @@ Gem::Specification.new do |spec|
   TEXT{{ else }}spec.description   = "{{ .gemspec.description }}"{{ end }}{{ else }}spec.description   = spec.summary{{ end }}
   spec.homepage      = "{{ .gemspec.homepage }}"
   spec.files         = Dir["{{ join $file_globs "\", \"" }}"]
-  spec.bindir        = "bin"
-  {{ if eq (len (.gemspec.executables | default (coll.Slice))) 0 -}}
-  spec.executables   = []
-  {{ else -}}
-  spec.executables   = ["{{ join .gemspec.executables "\", \"" }}"]
-  {{ end -}}
+  spec.bindir        = "exe"
+  spec.executables   = Dir["exe/*"].map { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.extra_rdoc_files = ["README.md", "CHANGELOG.md", "LICENSE"]
