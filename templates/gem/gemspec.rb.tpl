@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "{{ .gemspec.homepage }}"
   spec.files         = Dir["{{ join $file_globs "\", \"" }}"]
   spec.bindir        = "exe"
-  spec.executables   = Dir.glob("exe/*").map { |f| File.basename(f) }
+  spec.executables   = Dir["exe/*"].map { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.extra_rdoc_files = ["README.md", "CHANGELOG.md", "LICENSE"]
