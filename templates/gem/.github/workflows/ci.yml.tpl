@@ -24,6 +24,7 @@
   "dry-inflector"
   "dry-schema"
   "dry-types"
+  "hanami-cli"
 -}}
 {{ $use_release_machine := has $release_machine_gems .name.gem -}}
 name: CI
