@@ -18,15 +18,11 @@
   {{ end -}}
 {{ end -}}
 {{ $has_matrix := gt (len $matrix_dimensions) 0 -}}
-{{/* Gems using the new release-machine workflow */ -}}
+{{/* Gems using the new release-machine workflow (aside from Dry gems, which use it by default) */ -}}
 {{ $release_machine_gems := coll.Slice
-  "dry-cli"
-  "dry-inflector"
-  "dry-schema"
-  "dry-types"
   "hanami-cli"
 -}}
-{{ $use_release_machine := has $release_machine_gems .name.gem -}}
+{{ $use_release_machine := or (has $release_machine_gems .name.gem) (eq .github_org "dry-rb") -}}
 name: CI
 run-name: {{ print "${{" }} github.ref_type == 'tag' && format('Release {0}', github.ref_name) || 'CI' }}
 
@@ -200,27 +196,4 @@ jobs:
               .addRaw(`Triggered release workflow for <code>${tag}</code>`)
               .addLink("View release workflow", workflowUrl)
               .write();
-  {{- else if eq .github_org "dry-rb" }}
-
-  release:
-    runs-on: ubuntu-latest
-    if: github.ref_type == 'tag'
-    needs: tests
-    env:
-      GITHUB_LOGIN: dry-bot
-      GITHUB_TOKEN: {{ print "${{" }}secrets.GH_PAT}}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install package dependencies
-        run: "[ -e $APT_DEPS ] || sudo apt-get install -y --no-install-recommends $APT_DEPS"
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3
-      - name: Install dependencies
-        run: gem install ossy --no-document
-      - name: Trigger release workflow
-        run: |
-          tag=$(echo $GITHUB_REF | cut -d / -f 3)
-          ossy gh w dry-rb/devtools release --payload "{\"tag\":\"$tag\",\"sha\":\"{{ print "${{" }}github.sha}}\",\"tag_creator\":\"$GITHUB_ACTOR\",\"repo\":\"$GITHUB_REPOSITORY\",\"repo_name\":\"{{ print "${{" }}github.event.repository.name}}\"}"
   {{ end }}
