@@ -9,7 +9,8 @@ DOCKER_IMAGE="repo-sync-local"
 DOCKER_DIR="${REPO_SYNC_ROOT}/local-sync"
 DOCKER_REBUILD=false
 DOCKER_SHELL=false
-REPO_SYNC_SCHEMA_PATH="${REPO_SYNC_ROOT}/templates/repo-sync-schema.json"
+REPO_SYNC_SCHEMA_PATH="templates/repo-sync-schema.json"
+REPO_SYNC_ORG=""
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -18,7 +19,7 @@ while [[ $# -gt 0 ]]; do
       echo "Hanakai repo sync local testing tool"
       echo ""
       echo "USAGE:"
-      echo "    $(basename "$0") [OPTIONS] <REPOSITORY_PATH>"
+      echo "    $(basename "$0") --org <ORG> [OPTIONS] <REPOSITORY_PATH>"
       echo ""
       echo "ARGUMENTS:"
       echo "    <REPOSITORY_PATH>    Path to the target repository directory"
@@ -26,6 +27,8 @@ while [[ $# -gt 0 ]]; do
       echo "OPTIONS:"
       echo "    --schema <PATH>      Path to repo-sync schema JSON file"
       echo "                         (default: templates/repo-sync-schema.json)"
+      echo "    --org <ORG>         Organization name: dry or hanami [REQUIRED]"
+      echo "                         (determines which job to use in workflow)"
       echo "    --rebuild            Force rebuild of Docker image"
       echo "    --shell              Enter interactive shell instead of running sync"
       echo "    -h, --help           Show this help message"
@@ -40,16 +43,19 @@ while [[ $# -gt 0 ]]; do
       echo ""
       echo "EXAMPLES:"
       echo "    # Basic sync to a local repository"
-      echo "    $(basename "$0") /path/to/target/repository"
+      echo "    $(basename "$0") --org dry /path/to/target/repository"
       echo ""
       echo "    # Rebuild Docker image and sync"
-      echo "    $(basename "$0") --rebuild /path/to/target/repository"
+      echo "    $(basename "$0") --rebuild --org hanami /path/to/target/repository"
       echo ""
       echo "    # Enter interactive shell for debugging"
       echo "    $(basename "$0") --shell /path/to/target/repository"
       echo ""
       echo "    # Use custom schema file"
-      echo "    $(basename "$0") --schema /path/to/schema.json /path/to/target/repository"
+      echo "    $(basename "$0") --schema /path/to/schema.json --org dry /path/to/target/repository"
+      echo ""
+      echo "    # Specify organization (dry or hanami)"
+      echo "    $(basename "$0") --org hanami /path/to/target/repository"
       exit 0
       ;;
     --schema)
@@ -59,6 +65,11 @@ while [[ $# -gt 0 ]]; do
       ;;
     --rebuild)
       DOCKER_REBUILD=true
+      shift
+      ;;
+    --org)
+      shift
+      REPO_SYNC_ORG="$1"
       shift
       ;;
     --shell)
@@ -71,7 +82,7 @@ while [[ $# -gt 0 ]]; do
         TARGET_REPO_DIR=$(realpath "$1")
       else
         echo "Error: Unexpected argument: $1"
-        echo "Usage: $0 [--rebuild] --schema path/to/schema.json path/to/repo"
+        echo "Usage: $0 [--rebuild] --schema path/to/schema.json --org dry|hanami path/to/repo"
         exit 1
       fi
       shift
@@ -79,9 +90,15 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [ -z "${REPO_SYNC_ORG}" ]; then
+  echo "Error: No organization specified"
+  echo "Usage: $0 --org dry|hanami [--rebuild] --schema path/to/schema.json path/to/repo"
+  exit 1
+fi
+
 if [ -z "${REPO_SYNC_SCHEMA_PATH+x}" ]; then
   echo "Error: No schema specified"
-  echo "Usage: $0 [--rebuild] --schema path/to/schema.json path/to/repo"
+  echo "Usage: $0 [--rebuild] --schema path/to/schema.json --org dry|hanami path/to/repo"
   exit 1
 fi
 
@@ -92,7 +109,7 @@ fi
 
 if [ -z "${TARGET_REPO_DIR+x}" ]; then
   echo "Error: No target repository specified"
-  echo "Usage: $0 [--rebuild] --schema path/to/schema.json path/to/repo"
+  echo "Usage: $0 [--rebuild] --schema path/to/schema.json --org dry|hanami path/to/repo"
   exit 1
 fi
 
@@ -112,6 +129,7 @@ DOCKER_ARGS=(
   "--rm"
   "-v" "${REPO_SYNC_ROOT}:/workspace"
   "-e" "REPO_SYNC_SCHEMA_PATH=/workspace/${REPO_SYNC_SCHEMA_PATH}"
+  "-e" "REPO_SYNC_ORG=${REPO_SYNC_ORG}"
   "-v" "${TARGET_REPO_DIR}:/repos/${REPO_NAME}"
 )
 

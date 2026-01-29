@@ -22,7 +22,9 @@ if [[ $validation_status -ne 0 ]]; then
 fi
 
 # Sync files
-FILES=$(yq eval '.jobs.repo_sync.steps[] | select(.name=="Sync") | .with.FILES' "$WORKFLOW_FILE")
+JOB_NAME="sync_${REPO_SYNC_ORG}"
+FILES=$(yq eval ".jobs.${JOB_NAME}.with.files" "$WORKFLOW_FILE")
+
 while IFS= read -r file_mapping; do
   if [ -n "$file_mapping" ]; then
     sync_file "$file_mapping" "$SOURCE_DIR" "$TARGET_DIR" > /dev/null

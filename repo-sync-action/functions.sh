@@ -145,7 +145,8 @@ generate_target_file() {
   fi
 
   # Process the template
-  gomplate --missing-key=zero -f "$SOURCE_FULL_PATH" -c .="$REPO_SYNC_YML" > "$DEST_FULL_PATH" || {
+  # Run gomplate from the target directory so file.Exists can find relative files
+  (cd "$TARGET_DIR" && gomplate --missing-key=zero -f "$SOURCE_FULL_PATH" -c .="$REPO_SYNC_YML" > "$DEST_FULL_PATH") || {
     log "ERROR: Processing template ${SOURCE_FULL_PATH} failed"
     return 1
   }
