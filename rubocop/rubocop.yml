@@ -234,6 +234,9 @@ Style/DoubleNegation:
 Style/EachWithObject:
   Enabled: false
 
+Style/EmptyClassDefinition:
+  Enabled: false
+
 Style/EmptyElse:
   Enabled: false
 
