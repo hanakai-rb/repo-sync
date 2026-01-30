@@ -7,9 +7,17 @@
   {{ end -}}
 {{ end -}}
 {{ $default_ruby := index $ruby_versions 0 -}}
-{{ $optional_rubies := coll.Slice
-  "jruby"
--}}
+{{/* JRuby is required by default, optional only when ci.jruby is explicitly false */ -}}
+{{ $jruby_optional := false -}}
+{{ if and .ci (eq .ci.jruby false) -}}
+  {{ $jruby_optional = true -}}
+{{ end -}}
+{{ $optional_rubies := coll.Slice -}}
+{{ if $jruby_optional -}}
+  {{ $optional_rubies = $optional_rubies | coll.Append "jruby" -}}
+{{ else -}}
+  {{ $ruby_versions = $ruby_versions | coll.Append "jruby" -}}
+{{ end -}}
 {{/* Normalize ci.matrix into a dict so we can safely iterate over it later */ -}}
 {{ $matrix_dimensions := dict -}}
 {{ if and .ci .ci.matrix -}}

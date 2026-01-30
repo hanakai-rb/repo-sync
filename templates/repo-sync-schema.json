@@ -48,6 +48,10 @@
         "node": {
           "type": "boolean",
           "description": "Enable Node.js setup steps"
+        },
+        "jruby": {
+          "type": "boolean",
+          "description": "Determines if this gem supports JRuby. Default: true"
         }
       }
     },
