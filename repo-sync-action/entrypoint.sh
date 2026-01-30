@@ -101,7 +101,7 @@ sync_repos() {
     done
 
     cd "$REPO_PATH"
-    if [[ -n "$(git status --porcelain)" ]]; then
+    if [[ ${#changed_files[@]} -gt 0 ]]; then
       # Generate commit message with list of changed files
       commit_msg="File sync from ${GITHUB_REPOSITORY}\n\nUpdated files:\n\n"
       for file in "${changed_files[@]}"; do
