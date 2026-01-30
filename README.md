@@ -190,8 +190,12 @@ Functions like `if`, `eq`, `len`, `default`, `join`, etc. are available from:
 To test file sync locally, first make a local clone of a target repo. Then run `bin/local-sync`:
 
 ```bash
-bin/local-sync /path/to/repo
+bin/local-sync --org <org-name> /path/to/repo
 ```
+
+The `--org` parameter is **required** and specifies which organization's job configuration to use from the workflow file. Available options are:
+- `dry` - for gems from Dry ecosystem
+- `hanami` - for gems building Hanami framework
 
 After this, you can verify the changes by running `git diff` in the target repo.
 
