@@ -19,10 +19,8 @@
 {{ end -}}
 {{ $has_matrix := gt (len $matrix_dimensions) 0 -}}
 {{/* Gems using the new release-machine workflow (aside from Dry gems, which use it by default) */ -}}
-{{ $release_machine_gems := coll.Slice
-  "hanami-cli"
--}}
-{{ $use_release_machine := or (has $release_machine_gems .name.gem) (eq .github_org "dry-rb") -}}
+{{ $release_machine_gems := coll.Slice -}}
+{{ $use_release_machine := or (has $release_machine_gems .name.gem) (eq .github_org "dry-rb") (eq .github_org "hanami") -}}
 name: CI
 run-name: {{ print "${{" }} github.ref_type == 'tag' && format('Release {0}', github.ref_name) || 'CI' }}
 
