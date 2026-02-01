@@ -72,6 +72,7 @@ jobs:
         hanami/hanami
         hanami/hanami-cli
         hanami/hanami-controller
+        hanami/hanami-router
       files: |
         templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
         templates/gem/.github/ISSUE_TEMPLATE/bug-report.md=.github/ISSUE_TEMPLATE/bug-report.md
