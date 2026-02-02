@@ -72,6 +72,7 @@ jobs:
         hanami/hanami
         hanami/hanami-cli
         hanami/hanami-controller
+        hanami/hanami-db
         hanami/hanami-router
         hanami/hanami-view
       files: |
