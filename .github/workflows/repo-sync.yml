@@ -77,6 +77,9 @@ jobs:
         hanami/hanami-reloader
         hanami/hanami-router
         hanami/hanami-rspec
+        hanami/hanami-utils
+        hanami/hanami-validations
+        hanami/hanami-webconsole
         hanami/hanami-view
       files: |
         templates/gem/.github/FUNDING.yml=.github/FUNDING.yml
