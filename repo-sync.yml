@@ -1,0 +1,82 @@
+# Repo sync configuration.
+#
+# Defines groups of repositories and files to sync. See `.github/workflows/repo-sync.yml`.
+dry:
+  repos:
+    - dry-rb/dry-auto_inject
+    - dry-rb/dry-cli
+    - dry-rb/dry-configurable
+    - dry-rb/dry-core
+    - dry-rb/dry-effects
+    - dry-rb/dry-events
+    - dry-rb/dry-files
+    - dry-rb/dry-inflector
+    - dry-rb/dry-initializer
+    - dry-rb/dry-logger
+    - dry-rb/dry-logic
+    - dry-rb/dry-matcher
+    - dry-rb/dry-monads
+    - dry-rb/dry-monitor
+    - dry-rb/dry-operation
+    - dry-rb/dry-rails
+    - dry-rb/dry-schema
+    - dry-rb/dry-struct
+    - dry-rb/dry-system
+    - dry-rb/dry-transaction
+    - dry-rb/dry-transformer
+    - dry-rb/dry-types
+    - dry-rb/dry-validation
+  files:
+    - [templates/gem/.github/FUNDING.yml, .github/FUNDING.yml]
+    - [templates/gem/.github/ISSUE_TEMPLATE/bug-report.md, .github/ISSUE_TEMPLATE/bug-report.md]
+    - [templates/gem/.github/ISSUE_TEMPLATE/config.yml, .github/ISSUE_TEMPLATE/config.yml]
+    - [templates/gem/.github/SUPPORT.md, .github/SUPPORT.md]
+    - [templates/gem/.github/workflows/ci.yml.tpl, .github/workflows/ci.yml]
+    - [templates/gem/.github/workflows/pr-comments.yml, .github/workflows/pr-comments.yml]
+    - [templates/gem/.github/workflows/repo-sync-preview.yml, .github/workflows/repo-sync-preview.yml]
+    - [templates/gem/.github/workflows/rubocop.yml, .github/workflows/rubocop.yml]
+    - [templates/gem/.rspec, .rspec]
+    - [templates/gem/.rubocop.yml, .rubocop.yml]
+    - [templates/gem/CODE_OF_CONDUCT.md, CODE_OF_CONDUCT.md]
+    - [templates/gem/CONTRIBUTING.md, CONTRIBUTING.md]
+    - [templates/gem/Gemfile.devtools, Gemfile.devtools]
+    - [templates/gem/gemspec.rb.tpl, "{{ .name.gem }}.gemspec"]
+    - [templates/gem/LICENSE, LICENSE]
+    - [templates/gem/README.md.tpl, README.md]
+    - [templates/gem/spec/support/coverage.rb, spec/support/coverage.rb]
+    - [templates/gem/spec/support/rspec.rb, spec/support/rspec.rb]
+    - [templates/gem/spec/support/warnings.rb, spec/support/warnings.rb]
+
+hanami:
+  repos:
+    - hanami/hanami
+    - hanami/hanami-assets
+    - hanami/hanami-cli
+    - hanami/hanami-controller
+    - hanami/hanami-db
+    - hanami/hanami-reloader
+    - hanami/hanami-router
+    - hanami/hanami-rspec
+    - hanami/hanami-utils
+    - hanami/hanami-validations
+    - hanami/hanami-webconsole
+    - hanami/hanami-view
+  files:
+    - [templates/gem/.github/FUNDING.yml, .github/FUNDING.yml]
+    - [templates/gem/.github/ISSUE_TEMPLATE/bug-report.md, .github/ISSUE_TEMPLATE/bug-report.md]
+    - [templates/gem/.github/ISSUE_TEMPLATE/config.yml, .github/ISSUE_TEMPLATE/config.yml]
+    - [templates/gem/.github/SUPPORT.md, .github/SUPPORT.md]
+    - [templates/gem/.github/workflows/ci.yml.tpl, .github/workflows/ci.yml]
+    - [templates/gem/.github/workflows/pr-comments.yml, .github/workflows/pr-comments.yml]
+    - [templates/gem/.github/workflows/repo-sync-preview.yml, .github/workflows/repo-sync-preview.yml]
+    - [templates/gem/.github/workflows/rubocop.yml, .github/workflows/rubocop.yml]
+    - [templates/gem/.rspec, .rspec]
+    - [templates/gem/CODE_OF_CONDUCT.md, CODE_OF_CONDUCT.md]
+    - [templates/gem/CONTRIBUTING.md, CONTRIBUTING.md]
+    - [templates/gem/Gemfile.devtools, Gemfile.devtools]
+    - [templates/gem/gemspec.rb.tpl, "{{ .name.gem }}.gemspec"]
+    - [templates/gem/LICENSE, LICENSE]
+    - [templates/gem/README.md.tpl, README.md]
+    - [templates/gem/spec/support/coverage.rb, spec/support/coverage.rb]
+    - [templates/gem/spec/support/rspec.rb, spec/support/rspec.rb]
+    - [templates/gem/spec/support/warnings.rb, spec/support/warnings.rb]
