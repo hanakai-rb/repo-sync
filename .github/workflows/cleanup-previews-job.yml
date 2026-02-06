@@ -41,19 +41,14 @@ jobs:
           echo >> $GITHUB_STEP_SUMMARY
 
           # Fetch all open PR numbers from this repo once
-          echo "Fetching open PRs from ${GITHUB_REPOSITORY}..."
           OPEN_PR_NUMBERS=$(gh api \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "/repos/${GITHUB_REPOSITORY}/pulls?state=open" \
             --jq ".[].number" 2>&1 || true)
 
-          echo "Open PR numbers fetched (count: $(echo "$OPEN_PR_NUMBERS" | wc -w))"
-
           # Read repositories into array
           mapfile -t REPOS <<< "$REPOSITORIES"
-
-          echo "Processing ${#REPOS[@]} repositories..."
 
           for repository in "${REPOS[@]}"; do
             # Skip empty lines
@@ -65,17 +60,12 @@ jobs:
             IFS="@" read -ra REPO_INFO <<< "$repository"
             REPO_NAME="${REPO_INFO[0]}"
 
-            echo "Fetching branches from ${REPO_NAME}..."
-
             # Get all branches matching the preview pattern
             PREVIEW_BRANCHES=$(gh api \
               -H "Accept: application/vnd.github+json" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
               "/repos/${REPO_NAME}/branches" \
               --jq ".[] | select(.name | startswith(\"${PREVIEW_BRANCH_PREFIX}-\")) | .name" 2>&1 || true)
-
-            FETCH_STATUS=$?
-            echo "Branch fetch status: $FETCH_STATUS"
 
             if [[ -z "$PREVIEW_BRANCHES" ]]; then
               echo "⚪ **${repository}** - No preview branches" >> $GITHUB_STEP_SUMMARY
