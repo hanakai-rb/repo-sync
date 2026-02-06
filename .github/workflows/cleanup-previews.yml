@@ -1,0 +1,25 @@
+name: Cleanup previews
+
+on:
+  schedule:
+    # Nightly at 2 AM UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  cleanup_dry:
+    permissions: &permissions
+      contents: write
+    uses: ./.github/workflows/cleanup-previews-job.yml
+    secrets: inherit
+    with:
+      id: dry
+      group: dry
+
+  cleanup_hanami:
+    permissions: *permissions
+    uses: ./.github/workflows/cleanup-previews-job.yml
+    secrets: inherit
+    with:
+      id: hanami
+      group: hanami
