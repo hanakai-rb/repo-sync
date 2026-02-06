@@ -6,27 +6,21 @@ A GitHub Action and supporting tooling for synchronizing files across Hanakai re
 
 ## How does it work?
 
-In [`.github/workflows/repo-sync.yml`](.github/workflows/repo-sync.yml), we define a job with a list of repositories and files to be synced across each. A simplified example:
+In [`repo-sync.yml`](repo-sync.yml), we define groups of repos and files to sync. A simplified example:
 
 ```yaml
-repo_sync:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v2
-    - name: Sync
-      uses: ./repo-sync-action
-      with:
-        REPOSITORIES: |
-          hanami/view
-          dry-rb/dry-operation
-        FILES: |
-          templates/gem/.github/workflows/ci.yml.tpl=.github/workflows/ci.yml
-          templates/gem/.rubocop.yml=.rubocop.yml
-          templates/gem/README.md.tpl=README.md
-          templates/gem/gemspec.rb.tpl={{ .name.gem }}.gemspec
-        REPO_SYNC_SCHEMA_PATH: templates/repo-sync-schema.json
-        TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
+dry:
+  repos:
+    - dry-rb/dry-auto_inject
+    - dry-rb/dry-cli
+  files:
+    - [templates/gem/.github/workflows/ci.yml.tpl, .github/workflows/ci.yml]
+    - [templates/gem/.rubocop.yml, .rubocop.yml]
+    - [templates/gem/gemspec.rb.tpl, "{{ .name.gem }}.gemspec"]
+    - [templates/gem/README.md.tpl, README.md]
 ```
+
+This config is used by our main [`.github/workflows/repo-sync.yml`](.github/workflows/repo-sync.yml) GitHub Actions workflow to sync these files to each repo.
 
 **When this action runs on the main branch, it:**
 
@@ -75,49 +69,46 @@ This is kept here as a convenience, and is referenced directly by the RuboCop co
 
 ### GitHub Action
 
-Manage the workflow file at [`.github/workflows/repo-sync.yml`](.github/workflows/repo-sync.yml). Add to the `REPOSITORIES` and `FILES` lists as needed.
+For day-to-day changes, manage the sync config at [`repo-sync.yml`](repo-sync.yml). Add to the `repos` and `files` lists as needed.
 
-`REPOSITORIES` should be a list of GitHub repo paths:
+`repos` should be a list of GitHub repo paths:
 
 ```yaml
-REPOSITORIES: |
-  hanami/hanami
-  dry-rb/dry-operation
-  rom-rb/rom-sql
+repos:
+  - hanami/hanami
+  - dry-rb/dry-operation
+  - rom-rb/rom-sql
 ```
 
 To use a non-default branch, specify the branch name after an `@` delimiter:
 
 ```yaml
-REPOSITORIES: |
-  hanami/hanami@unstable
+repos:
+  - hanami/hanami@unstable
 ```
 
-`FILES` should be a list of `<source>=<destination>` pairs, delimited by `=`:
+`files` should be a list of `[<source>, <destination>]` array pairs:
 
 ```yaml
-FILES: |
-  templates/gem/.github/workflows/ci.yml.tpl=.github/workflows/ci.yml
-  templates/gem/.rubocop.yml=.rubocop.yml
+files:
+  - [templates/gem/.github/workflows/ci.yml.tpl, .github/workflows/ci.yml]
+  - [templates/gem/.rubocop.yml, .rubocop.yml]
 ```
 
 Entire folders may be synced (though for our purposes, it’s unlikely we’ll need this). Specify folders with a trailing slash:
 
 ```yaml
-FILES: |
-  templates/gem/some-folder/=another-folder/
+files:
+  - [templates/gem/some-folder/, another-folder/]
 ```
 
-Source files come from this repo, and destination files are created or updated in each target repo listed in `REPOSITORIES`. File paths are all relative to the root of each repo.
+Source files come from this repo, and destination files are created or updated in each target repo listed in `repos`. File paths are all relative to the root of each repo.
 
-You can use template syntax to name destination files using data from each repo’s `repo-sync.yml`. See [template authoring](#template-authoring) for more details on this syntax.
+You can use template syntax to name destination files using data from each repo’s own `repo-sync.yml`. See [template authoring](#template-authoring) for more details on this syntax.
 
 ```yaml
-FILES: |
-  templates/gem/.github/workflows/ci.yml.tpl=.github/workflows/ci.yml
-  templates/gem/.rubocop.yml=.rubocop.yml
-  templates/gem/README.md.tpl=README.md
-  templates/gem/gemspec.rb.tpl={{ .name.gem }}.gemspec
+files:
+  - [templates/gem/gemspec.rb.tpl, {{ .name.gem }}.gemspec]
 ```
 
 The action runs on:
@@ -130,6 +121,8 @@ The action runs on:
 > Later, we should add a daily scheduled run to trigger files changes in response to `repo-sync.yml` changs in each repo. Alternatively, we could sync a dedicated workflow to each repo that triggers a sync in _this_ repo reponse to `repo-sync.yml` being updated.
 
 #### Action parameters
+
+We set these lower-level action parameters in [`.github/workflows/repo-sync-job.yml`](.github/workflows/repo-sync-job.yml).
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
