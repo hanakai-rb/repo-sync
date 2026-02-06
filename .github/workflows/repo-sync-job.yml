@@ -3,12 +3,8 @@ name: Repo sync job
 on:
   workflow_call:
     inputs:
-      repos:
-        description: List of repos to sync
-        required: true
-        type: string
-      files:
-        description: List of files to sync
+      group:
+        description: Name of the group to sync (from repo-sync.yml)
         required: true
         type: string
       id:
@@ -24,14 +20,30 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v2
+      - name: Load config
+        id: config
+        run: |
+          CONFIG_FILE="repo-sync.yml"
+
+          # Extract repos for the specified group
+          REPOS=$(yq eval ".${{ inputs.group }}.repos | .[]" "$CONFIG_FILE")
+          echo "repos<<EOF" >> $GITHUB_OUTPUT
+          echo "$REPOS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          # Extract files for the specified group and convert from [source, target] pairs to source=target format
+          FILES=$(yq eval ".${{ inputs.group }}.files | map(.[0] + \"=\" + .[1]) | .[]" "$CONFIG_FILE")
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
       - name: Sync
         id: sync
         uses: ./repo-sync-action
         with:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_EVENT_TYPE: ${{ github.event.action }}
-          REPOSITORIES: ${{ inputs.repos }}
-          FILES: ${{ inputs.files }}
+          REPOSITORIES: ${{ steps.config.outputs.repos }}
+          FILES: ${{ steps.config.outputs.files }}
           REPO_SYNC_SCHEMA_PATH: templates/repo-sync-schema.json
           TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
       - name: Comment
