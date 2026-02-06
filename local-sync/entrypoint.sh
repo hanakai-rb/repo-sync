@@ -6,7 +6,7 @@ set -e
 
 SOURCE_DIR="/workspace"
 TARGET_DIR="$1"
-WORKFLOW_FILE="${SOURCE_DIR}/.github/workflows/repo-sync.yml"
+CONFIG_FILE="${SOURCE_DIR}/repo-sync.yml"
 
 source "${SOURCE_DIR}/repo-sync-action/functions.sh"
 
@@ -22,8 +22,8 @@ if [[ $validation_status -ne 0 ]]; then
 fi
 
 # Sync files
-JOB_NAME="sync_${REPO_SYNC_ORG}"
-FILES=$(yq eval ".jobs.${JOB_NAME}.with.files" "$WORKFLOW_FILE")
+# Extract files for the group and convert from [source, target] pairs to source=target format
+FILES=$(yq eval ".${REPO_SYNC_ORG}.files | map(.[0] + \"=\" + .[1]) | .[]" "$CONFIG_FILE")
 
 while IFS= read -r file_mapping; do
   if [ -n "$file_mapping" ]; then
