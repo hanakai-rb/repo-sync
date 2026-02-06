@@ -47,7 +47,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "/repos/${GITHUB_REPOSITORY}/pulls?state=open" \
-            --jq ".[].number" 2>/dev/null || echo "")
+            --jq ".[].number" 2>&1 || true)
 
           # Read repositories into array
           mapfile -t REPOS <<< "$REPOSITORIES"
@@ -67,7 +67,7 @@ jobs:
               -H "Accept: application/vnd.github+json" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
               "/repos/${REPO_NAME}/branches" \
-              --jq ".[] | select(.name | startswith(\"${PREVIEW_BRANCH_PREFIX}-\")) | .name" 2>/dev/null || echo "")
+              --jq ".[] | select(.name | startswith(\"${PREVIEW_BRANCH_PREFIX}-\")) | .name" 2>&1 || true)
 
             if [[ -z "$PREVIEW_BRANCHES" ]]; then
               echo "⚪ **${repository}** - No preview branches" >> $GITHUB_STEP_SUMMARY
@@ -76,8 +76,7 @@ jobs:
               continue
             fi
 
-            DELETED_COUNT=0
-            KEPT_COUNT=0
+            DELETED_BRANCHES=()
 
             while IFS= read -r branch; do
               [[ -z "$branch" ]] && continue
@@ -86,8 +85,9 @@ jobs:
               PR_NUMBER="${branch#${PREVIEW_BRANCH_PREFIX}-}"
 
               # Check if the PR number is in our list of open PRs
-              if echo "$OPEN_PR_NUMBERS" | grep -q "^${PR_NUMBER}$"; then
-                ((KEPT_COUNT++))
+              if echo "$OPEN_PR_NUMBERS" | grep -qx "${PR_NUMBER}"; then
+                # PR is still open, keep the branch
+                continue
               else
                 # Delete the branch
                 if gh api \
@@ -96,17 +96,17 @@ jobs:
                   -H "X-GitHub-Api-Version: 2022-11-28" \
                   "/repos/${REPO_NAME}/git/refs/heads/${branch}" 2>/dev/null; then
                   echo "  🗑️  Deleted ${branch} (PR #${PR_NUMBER})"
-                  ((DELETED_COUNT++))
+                  DELETED_BRANCHES+=("${branch}")
                 else
                   echo "  ⚠️  Failed to delete ${branch} (PR #${PR_NUMBER})"
                 fi
               fi
             done <<< "$PREVIEW_BRANCHES"
 
-            if [[ $DELETED_COUNT -gt 0 ]]; then
-              echo "🧹 **${repository}** - Deleted ${DELETED_COUNT} stale branch(es), kept ${KEPT_COUNT}" >> $GITHUB_STEP_SUMMARY
+            if [[ ${#DELETED_BRANCHES[@]} -gt 0 ]]; then
+              echo "🧹 **${repository}** - Deleted ${#DELETED_BRANCHES[@]} stale branch(es)" >> $GITHUB_STEP_SUMMARY
             else
-              echo "⚪ **${repository}** - No stale branches (${KEPT_COUNT} active)" >> $GITHUB_STEP_SUMMARY
+              echo "⚪ **${repository}** - No stale branches" >> $GITHUB_STEP_SUMMARY
             fi
             echo >> $GITHUB_STEP_SUMMARY
 

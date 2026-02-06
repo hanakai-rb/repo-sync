@@ -1,5 +1,10 @@
 name: Cleanup previews
 
+# Clean up stale sync preview branches in synced repos.
+#
+# These branches should be cleaned up when repo-sync PRs are closed (see repo-sync.yml). This
+# nightly job catches any that may have been missed.
+
 on:
   schedule:
     # Nightly at 2 AM UTC
