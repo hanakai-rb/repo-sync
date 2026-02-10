@@ -151,7 +151,7 @@ jobs:
         {{- end }}
       - name: Create optional failure comment
         if: {{ print "${{" }} matrix.optional && github.event.pull_request }}
-        uses: hanakai-rb/repo-sync/pr-comment-artifact@main
+        uses: hanakai-rb/repo-sync/shared-actions/pr-comment-artifact@main
         with:
           name: ci-ruby-{{ print "${{" }} matrix.ruby }}
           pr-number: {{ print "${{" }} github.event.pull_request.number }}
