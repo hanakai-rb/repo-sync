@@ -296,6 +296,9 @@ Style/Lambda:
 Style/LambdaCall:
   Enabled: false
 
+Style/ModuleFunction:
+  Enabled: false
+
 Style/MultilineBlockChain:
   Enabled: false
 
