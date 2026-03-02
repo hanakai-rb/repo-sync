@@ -23,13 +23,14 @@ runs:
   using: composite
   steps:
     - name: Prepare comment artifact
+      id: prepare
       shell: bash
       run: |
         echo "${INPUTS_PR_NUMBER}" > pr-number.txt
         echo "${INPUTS_COMMENT_TAG}" > comment-tag.txt
         echo "${INPUTS_MODE}" > mode.txt
         echo "${INPUTS_MESSAGE}" > message.txt
-        echo "artifact_id=$(date +%s%N)-$$" >> $GITHUB_ENV
+        echo "artifact_id=$(date +%s%N)-$$" >> $GITHUB_OUTPUT
       env:
         INPUTS_PR_NUMBER: ${{ inputs.pr-number }}
         INPUTS_COMMENT_TAG: ${{ inputs.comment-tag }}
@@ -39,7 +40,7 @@ runs:
     - name: Upload comment artifact
       uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
       with:
-        name: pr-comment-${{ inputs.name }}-${{ env.artifact_id }}
+        name: pr-comment-${{ inputs.name }}-${{ steps.prepare.outputs.artifact_id }}
         path: |
           pr-number.txt
           comment-tag.txt
