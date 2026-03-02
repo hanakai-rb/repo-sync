@@ -16,16 +16,23 @@ jobs:
         with:
           github-token: ${{ secrets.REPO_SYNC_DISPATCH_TOKEN }}
           script: |
+            const { BRANCH, REPO, WORKFLOW, STATUS, RUN_URL } = process.env;
             await github.rest.actions.createWorkflowDispatch({
               owner: "hanakai-rb",
               repo: "repo-sync",
               workflow_id: "aggregate-preview-status.yml",
               ref: "main",
               inputs: {
-                pr_number: "${{ github.event.workflow_run.head_branch }}".replace("ci/repo-sync-preview-", ""),
-                repo_name: "${{ github.repository }}",
-                workflow_name: "${{ github.event.workflow_run.name }}",
-                status: "${{ github.event.workflow_run.conclusion }}",
-                run_url: "${{ github.event.workflow_run.html_url }}"
+                pr_number: BRANCH.replace("ci/repo-sync-preview-", ""),
+                repo_name: REPO,
+                workflow_name: WORKFLOW,
+                status: STATUS,
+                run_url: RUN_URL
               }
             });
+        env:
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          REPO: ${{ github.repository }}
+          WORKFLOW: ${{ github.event.workflow_run.name }}
+          STATUS: ${{ github.event.workflow_run.conclusion }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
