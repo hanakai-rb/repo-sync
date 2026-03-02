@@ -16,7 +16,8 @@ jobs:
     permissions: &permissions
       contents: write
     uses: ./.github/workflows/cleanup-previews-job.yml
-    secrets: inherit
+    secrets:
+      REPO_SYNC_TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
     with:
       id: dry
       group: dry
@@ -24,7 +25,8 @@ jobs:
   cleanup_hanami:
     permissions: *permissions
     uses: ./.github/workflows/cleanup-previews-job.yml
-    secrets: inherit
+    secrets:
+      REPO_SYNC_TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
     with:
       id: hanami
       group: hanami
