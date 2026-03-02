@@ -18,7 +18,9 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
+        with:
+          persist-credentials: false
 
       - name: Load config
         id: config
@@ -26,10 +28,12 @@ jobs:
           CONFIG_FILE="repo-sync.yml"
 
           # Extract repos for the specified group
-          REPOS=$(yq eval ".${{ inputs.group }}.repos | .[]" "$CONFIG_FILE")
+          REPOS=$(yq eval ".${INPUTS_GROUP}.repos | .[]" "$CONFIG_FILE")
           echo "repos<<EOF" >> $GITHUB_OUTPUT
           echo "$REPOS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+        env:
+          INPUTS_GROUP: ${{ inputs.group }}
 
       - name: Cleanup stale branches
         env:

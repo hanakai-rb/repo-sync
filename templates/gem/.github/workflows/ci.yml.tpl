@@ -109,7 +109,7 @@ jobs:
     {{- end }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
       - name: Install package dependencies
         run: "[ -e $APT_DEPS ] || sudo apt-get install -y --no-install-recommends $APT_DEPS"
       {{ if and .ci .ci.node -}}
@@ -174,7 +174,7 @@ jobs:
     needs: tests
     steps:
       - name: Trigger release workflow
-        uses: actions/github-script@v7
+        uses: actions/github-script@450193c5abd4cdb17ba9f3ffcfe8f635c4bb6c2a
         with:
           github-token: {{ print "${{" }} secrets.RELEASE_MACHINE_DISPATCH_TOKEN }}
           script: |
