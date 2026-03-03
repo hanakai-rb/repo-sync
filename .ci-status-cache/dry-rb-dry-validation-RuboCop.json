@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-validation",
   "workflow": "RuboCop",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-validation/actions/runs/22601413726",
-  "timestamp": "2026-03-02T23:58:08Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-validation/actions/runs/22601488762",
+  "timestamp": "2026-03-03T00:01:54Z"
 }
