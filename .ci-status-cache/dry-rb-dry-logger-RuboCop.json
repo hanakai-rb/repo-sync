@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-logger",
   "workflow": "RuboCop",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-logger/actions/runs/22601393404",
-  "timestamp": "2026-03-02T23:57:09Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-logger/actions/runs/22601469485",
+  "timestamp": "2026-03-03T00:00:44Z"
 }
