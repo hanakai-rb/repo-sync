@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-monads",
   "workflow": "RuboCop",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-monads/actions/runs/22601397876",
-  "timestamp": "2026-03-02T23:57:22Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-monads/actions/runs/22601474311",
+  "timestamp": "2026-03-03T00:01:09Z"
 }
