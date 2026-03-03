@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-types",
   "workflow": "RuboCop",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-types/actions/runs/22601412399",
-  "timestamp": "2026-03-02T23:57:53Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-types/actions/runs/22601495646",
+  "timestamp": "2026-03-03T00:01:06Z"
 }
