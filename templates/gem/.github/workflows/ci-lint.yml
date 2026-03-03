@@ -2,9 +2,10 @@ name: CI lint
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "release-*", "ci/*"]
+    tags: ["v*"]
   pull_request:
-    branches: ["**"]
+    branches: ["main", "release-*"]
 
 permissions: {}
 

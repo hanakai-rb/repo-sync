@@ -25,8 +25,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Ruby 4.0 # zizmor: ignore[cache-poisoning]
-        uses: ruby/setup-ruby@896e71e063dc0933bb442a54e949d75291991ecb
+      - name: Set up Ruby 4.0
+        uses: ruby/setup-ruby@896e71e063dc0933bb442a54e949d75291991ecb # zizmor: ignore[cache-poisoning]
         with:
           ruby-version: 4.0
           bundler-cache: true
