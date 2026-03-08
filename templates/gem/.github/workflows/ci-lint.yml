@@ -6,6 +6,8 @@ on:
     tags: ["v*"]
   pull_request:
     branches: ["main", "release-*"]
+  schedule:
+    cron: "0 0 * * 0" # every Sunday at midnight
 
 permissions: {}
 
