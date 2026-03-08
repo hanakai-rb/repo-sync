@@ -4,8 +4,12 @@ on:
   push:
     branches: ["main", "release-*", "ci/*"]
     tags: ["v*"]
+    paths:
+      - ".github/**"
   pull_request:
     branches: ["main", "release-*"]
+    paths:
+      - ".github/**"
   schedule:
     cron: "0 0 * * 0" # every Sunday at midnight
 
