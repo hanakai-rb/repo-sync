@@ -3,8 +3,14 @@ name: CI lint
 on:
   push:
     branches: ["main"]
+    paths:
+      - ".github/**"
   pull_request:
     branches: ["**"]
+    paths:
+      - ".github/**"
+  schedule:
+    cron: "0 0 * * 0" # every Sunday at midnight
 
 permissions: {}
 
