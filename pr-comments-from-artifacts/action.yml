@@ -25,12 +25,13 @@ runs:
   using: composite
   steps:
     - name: Download artifacts and post comments
-      uses: actions/github-script@v7
+      uses: actions/github-script@450193c5abd4cdb17ba9f3ffcfe8f635c4bb6c2a
       with:
         script: |
           const fs = require("fs");
           const path = require("path");
           const {owner, repo} = context.repo;
+          const run_id = process.env.WORKFLOW_RUN_ID;
 
           const readFile = (p) => {
             return fs.existsSync(p) ? fs.readFileSync(p, "utf8").trim() : null;
@@ -42,7 +43,7 @@ runs:
 
           // Download and extract artifacts
           const {data: {artifacts}} = await github.rest.actions.listWorkflowRunArtifacts({
-            owner, repo, run_id: ${{ inputs.workflow-run-id }},
+            owner, repo, run_id,
           });
 
           const commentsDir = "pr-comments";
@@ -89,3 +90,5 @@ runs:
               }
             }
           }
+      env:
+        WORKFLOW_RUN_ID: ${{ inputs.workflow-run-id }}

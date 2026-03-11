@@ -14,7 +14,8 @@ jobs:
       contents: write
       pull-requests: write
     uses: ./.github/workflows/repo-sync-job.yml
-    secrets: inherit
+    secrets:
+      REPO_SYNC_TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
     with:
       id: dry
       group: dry
@@ -22,7 +23,8 @@ jobs:
   sync_hanami:
     permissions: *permissions
     uses: ./.github/workflows/repo-sync-job.yml
-    secrets: inherit
+    secrets:
+      REPO_SYNC_TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
     with:
       id: hanami
       group: hanami

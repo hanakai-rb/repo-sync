@@ -11,6 +11,9 @@ on:
         description: Identifier of the calling job
         required: true
         type: string
+    secrets:
+      REPO_SYNC_TOKEN:
+        required: true
 
 jobs:
   sync:
@@ -19,23 +22,27 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
+        with:
+          persist-credentials: false
       - name: Load config
         id: config
         run: |
           CONFIG_FILE="repo-sync.yml"
 
           # Extract repos for the specified group
-          REPOS=$(yq eval ".${{ inputs.group }}.repos | .[]" "$CONFIG_FILE")
+          REPOS=$(yq eval ".${INPUTS_GROUP}.repos | .[]" "$CONFIG_FILE")
           echo "repos<<EOF" >> $GITHUB_OUTPUT
           echo "$REPOS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
           # Extract files for the specified group and convert from [source, target] pairs to source=target format
-          FILES=$(yq eval ".${{ inputs.group }}.files | map(.[0] + \"=\" + .[1]) | .[]" "$CONFIG_FILE")
+          FILES=$(yq eval ".${INPUTS_GROUP}.files | map(.[0] + \"=\" + .[1]) | .[]" "$CONFIG_FILE")
           echo "files<<EOF" >> $GITHUB_OUTPUT
           echo "$FILES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+        env:
+          INPUTS_GROUP: ${{ inputs.group }}
       - name: Sync
         id: sync
         uses: ./repo-sync-action
@@ -48,7 +55,7 @@ jobs:
           TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
       - name: Comment
         if: github.event.pull_request.number
-        uses: thollander/actions-comment-pull-request@v3
+        uses: thollander/actions-comment-pull-request@e4a76dd2b0a3c2027c3fd84147a67c22ee4c90fa
         with:
           message: ${{ steps.sync.outputs.SYNC_SUMMARY || '' }}
           pr-number: ${{ github.event.pull_request.number }}
