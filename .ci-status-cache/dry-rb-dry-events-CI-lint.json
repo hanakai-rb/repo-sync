@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-events",
   "workflow": "CI lint",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-events/actions/runs/23005006426",
-  "timestamp": "2026-03-12T13:47:26Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-events/actions/runs/23005787179",
+  "timestamp": "2026-03-12T14:03:14Z"
 }
