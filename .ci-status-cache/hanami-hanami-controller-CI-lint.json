@@ -1,7 +1,7 @@
 {
   "repo": "hanami/hanami-controller",
   "workflow": "CI lint",
-  "status": "failure",
-  "url": "https://github.com/hanami/hanami-controller/actions/runs/23005006763",
-  "timestamp": "2026-03-12T13:46:20Z"
+  "status": "success",
+  "url": "https://github.com/hanami/hanami-controller/actions/runs/23005784960",
+  "timestamp": "2026-03-12T14:03:25Z"
 }
