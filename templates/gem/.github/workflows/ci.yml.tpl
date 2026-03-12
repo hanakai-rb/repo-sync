@@ -41,6 +41,9 @@ on:
   schedule:
     - cron: "30 4 * * *"
 
+permissions:
+  contents: read
+
 jobs:
   tests:
     name: Tests (Ruby {{ print "${{" }} matrix.ruby }}{{ if $has_matrix }}{{ range $key, $values := $matrix_dimensions }}, {{ strings.Title $key }} {{ print "${{" }} matrix.{{ $key }} }}{{ end }}{{ end }})
@@ -110,11 +113,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
+        with:
+          persist-credentials: false
       - name: Install package dependencies
         run: "[ -e $APT_DEPS ] || sudo apt-get install -y --no-install-recommends $APT_DEPS"
       {{ if and .ci .ci.node -}}
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # zizmor: ignore[cache-poisoning]
         with:
           node-version: 20.x
       - name: Install dependencies
@@ -165,7 +170,7 @@ jobs:
     permissions:
       actions: write
     steps:
-      - uses: liskin/gh-workflow-keepalive@v1
+      - uses: liskin/gh-workflow-keepalive@7a9194bad497f0b993708eeaf10fc0a2d726eb71
   {{- if $use_release_machine }}
 
   release:
