@@ -1,0 +1,7 @@
+{
+  "repo": "dry-rb/dry-core",
+  "workflow": "CI lint",
+  "status": "failure",
+  "url": "https://github.com/dry-rb/dry-core/actions/runs/23004726003",
+  "timestamp": "2026-03-12T13:38:32Z"
+}
