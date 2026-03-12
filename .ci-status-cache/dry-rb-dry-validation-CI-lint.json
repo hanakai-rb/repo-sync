@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-validation",
   "workflow": "CI lint",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-validation/actions/runs/23005048296",
-  "timestamp": "2026-03-12T13:49:13Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-validation/actions/runs/23020958428",
+  "timestamp": "2026-03-12T19:55:02Z"
 }
