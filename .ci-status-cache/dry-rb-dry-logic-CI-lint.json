@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-logic",
   "workflow": "CI lint",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-logic/actions/runs/23005019473",
-  "timestamp": "2026-03-12T13:48:39Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-logic/actions/runs/23005795909",
+  "timestamp": "2026-03-12T14:03:33Z"
 }
