@@ -1,0 +1,7 @@
+{
+  "repo": "dry-rb/dry-monitor",
+  "workflow": "CI lint",
+  "status": "failure",
+  "url": "https://github.com/dry-rb/dry-monitor/actions/runs/23004742341",
+  "timestamp": "2026-03-12T13:39:46Z"
+}
