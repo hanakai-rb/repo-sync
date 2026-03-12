@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-types",
   "workflow": "CI lint",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-types/actions/runs/23005045495",
-  "timestamp": "2026-03-12T13:48:57Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-types/actions/runs/23005815533",
+  "timestamp": "2026-03-12T14:04:23Z"
 }
