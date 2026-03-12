@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-rails",
   "workflow": "CI lint",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-rails/actions/runs/23005030408",
-  "timestamp": "2026-03-12T13:48:43Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-rails/actions/runs/23005804255",
+  "timestamp": "2026-03-12T14:05:01Z"
 }
