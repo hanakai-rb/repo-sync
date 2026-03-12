@@ -1,0 +1,7 @@
+{
+  "repo": "dry-rb/dry-transaction",
+  "workflow": "CI lint",
+  "status": "failure",
+  "url": "https://github.com/dry-rb/dry-transaction/actions/runs/23004751759",
+  "timestamp": "2026-03-12T13:39:50Z"
+}
