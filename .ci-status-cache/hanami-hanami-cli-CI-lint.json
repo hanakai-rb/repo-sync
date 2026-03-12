@@ -1,0 +1,7 @@
+{
+  "repo": "hanami/hanami-cli",
+  "workflow": "CI lint",
+  "status": "failure",
+  "url": "https://github.com/hanami/hanami-cli/actions/runs/23004725425",
+  "timestamp": "2026-03-12T13:38:41Z"
+}
