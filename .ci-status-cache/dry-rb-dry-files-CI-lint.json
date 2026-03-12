@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-files",
   "workflow": "CI lint",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-files/actions/runs/23005009212",
-  "timestamp": "2026-03-12T13:48:04Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-files/actions/runs/23005788717",
+  "timestamp": "2026-03-12T14:04:25Z"
 }
