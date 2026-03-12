@@ -23,6 +23,10 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: ci-status-cache-pr-${{ github.event.inputs.pr_number }}
+  cancel-in-progress: false
+
 jobs:
   update_comment:
     runs-on: ubuntu-latest
