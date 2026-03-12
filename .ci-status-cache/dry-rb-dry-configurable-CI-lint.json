@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-configurable",
   "workflow": "CI lint",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-configurable/actions/runs/23004998819",
-  "timestamp": "2026-03-12T13:48:27Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-configurable/actions/runs/23005781545",
+  "timestamp": "2026-03-12T14:03:55Z"
 }
