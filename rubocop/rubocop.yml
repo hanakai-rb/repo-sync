@@ -80,6 +80,10 @@ Lint/Debugger:
   Exclude:
     - "bin/console"
 
+# TODO: Remove when https://github.com/rubocop/rubocop/pull/15055 is released (rubocop >1.86.0)
+Lint/DuplicateMethods:
+  Enabled: false
+
 Lint/EmptyBlock:
   Exclude:
     - "spec/**/*.rb"
