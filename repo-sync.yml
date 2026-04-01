@@ -56,6 +56,7 @@ hanami:
     - hanami/hanami-cli
     - hanami/hanami-controller
     - hanami/hanami-db
+    - hanami/hanami-mailer
     - hanami/hanami-reloader
     - hanami/hanami-router
     - hanami/hanami-rspec
