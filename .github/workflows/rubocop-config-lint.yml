@@ -1,0 +1,98 @@
+name: RuboCop config lint
+
+# Loads rubocop/rubocop.yml against the latest RuboCop release to catch
+# obsolete, renamed, or deprecated cops before they reach downstream repos.
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "rubocop/**"
+      - ".github/workflows/rubocop-config-lint.yml"
+  pull_request:
+    branches: ["**"]
+    paths:
+      - "rubocop/**"
+      - ".github/workflows/rubocop-config-lint.yml"
+  schedule:
+    - cron: "0 0 * * 0" # every Sunday at midnight
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  lint-config:
+    name: Lint rubocop/rubocop.yml against latest RuboCop
+    runs-on: ubuntu-latest
+    permissions:
+      # Needed to open an issue when the weekly scheduled run fails.
+      issues: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
+        with:
+          persist-credentials: false
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # zizmor: ignore[cache-poisoning]
+        with:
+          ruby-version: "3.3"
+
+      - name: Install latest RuboCop
+        run: gem install rubocop --no-document
+
+      - name: Report RuboCop version
+        run: rubocop --version
+
+      - name: Lint shared config
+        run: |
+          set -euo pipefail
+
+          # --show-cops loads the config without actually linting any files.
+          # Obsolete or renamed cops make RuboCop exit non-zero. Deprecation
+          # warnings print to stderr without failing, so we grep for those too.
+          stderr_file="$(mktemp)"
+          rubocop --config rubocop/rubocop.yml --show-cops > /dev/null 2> "$stderr_file"
+
+          cat "$stderr_file"
+
+          if grep -Eqi "(obsolete|has been renamed|has been removed|is deprecated)" "$stderr_file"; then
+            echo "::error::rubocop/rubocop.yml references obsolete, renamed, or deprecated cops. See log above."
+            exit 1
+          fi
+
+      - name: Open or refresh tracking issue on scheduled failure
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: "RuboCop config drift detected"
+          RUN_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        run: |
+          set -euo pipefail
+
+          # Keep a single canonical issue for config drift (Dependabot-style):
+          # - if none exists, create it
+          # - if one is open, edit its body in place (no comment pile-up)
+          # - if one is closed without the drift being fixed, reopen and refresh it
+          body="The weekly RuboCop config lint detected obsolete, renamed, or deprecated cops in \`rubocop/rubocop.yml\`.
+
+          Latest failing run: $RUN_URL
+
+          This issue is maintained automatically by \`.github/workflows/rubocop-config-lint.yml\`. It will be refreshed each time the weekly check fails and can be closed once the config is updated."
+
+          existing="$(gh issue list \
+            --state all \
+            --search "\"$TITLE\" in:title" \
+            --json number,state \
+            --jq '.[0] // empty')"
+
+          if [ -z "$existing" ]; then
+            gh issue create --title "$TITLE" --body "$body"
+          else
+            number="$(echo "$existing" | jq -r '.number')"
+            state="$(echo "$existing" | jq -r '.state')"
+            gh issue edit "$number" --body "$body"
+            if [ "$state" = "CLOSED" ]; then
+              gh issue reopen "$number"
+            fi
+          fi
