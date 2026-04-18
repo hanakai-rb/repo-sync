@@ -23,10 +23,6 @@ permissions:
   contents: write
   pull-requests: write
 
-concurrency:
-  group: ci-status-cache-pr-${{ github.event.inputs.pr_number }}
-  cancel-in-progress: false
-
 jobs:
   update_comment:
     runs-on: ubuntu-latest
@@ -78,7 +74,7 @@ jobs:
           git add "${FILE_PATH}"
           git commit -m "Update status: ${REPO_NAME} / ${WORKFLOW_NAME} = ${STATUS}"
 
-          MAX_RETRIES=5
+          MAX_RETRIES=20
           for i in $(seq 1 $MAX_RETRIES); do
             if git push origin "${CACHE_BRANCH}"; then
               echo "Successfully pushed on attempt $i"
@@ -86,7 +82,11 @@ jobs:
             else
               if [ $i -lt $MAX_RETRIES ]; then
                 echo "Push failed on attempt $i, retrying..."
-                sleep $i
+                # Add random jitter to prevent thundering herd (0-2 seconds)
+                JITTER=$((RANDOM % 3))
+                SLEEP_TIME=$((i + JITTER))
+                echo "Waiting ${SLEEP_TIME} seconds before retry..."
+                sleep $SLEEP_TIME
                 git pull --rebase origin "${CACHE_BRANCH}"
               else
                 echo "Failed to push after $MAX_RETRIES attempts"
