@@ -30,7 +30,6 @@ Gem::Specification.new do |spec|
   spec.extra_rdoc_files = ["README.md", "CHANGELOG.md", "LICENSE"]
 
   {{ $github_path := printf "%s/%s" .github_org .name.gem -}}
-  spec.metadata["allowed_push_host"] = "https://rubygems.org"
   spec.metadata["changelog_uri"]     = "https://github.com/{{ $github_path }}/blob/main/CHANGELOG.md"
   spec.metadata["source_code_uri"]   = "https://github.com/{{ $github_path }}"
   spec.metadata["bug_tracker_uri"]   = "https://github.com/{{ $github_path }}/issues"
