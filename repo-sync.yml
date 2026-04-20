@@ -52,9 +52,9 @@ dry:
 hanami:
   repos:
     - hanami/hanami
+    - hanami/hanami-action
     - hanami/hanami-assets
     - hanami/hanami-cli
-    - hanami/hanami-controller
     - hanami/hanami-db
     - hanami/hanami-mailer
     - hanami/hanami-reloader
