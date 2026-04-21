@@ -55,6 +55,7 @@ hanami:
     - hanami/hanami-action
     - hanami/hanami-assets
     - hanami/hanami-cli
+    - hanami/hanami-controller-stub
     - hanami/hanami-db
     - hanami/hanami-mailer
     - hanami/hanami-reloader
