@@ -25,6 +25,10 @@
       "type": "string",
       "description": "GitHub organization name"
     },
+    "github_repo": {
+      "type": "string",
+      "description": "GitHub repo name (.name.gem will be used if not given)"
+    },
     "ci": {
       "type": "object",
       "properties": {
