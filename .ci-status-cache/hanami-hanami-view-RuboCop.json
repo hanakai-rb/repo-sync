@@ -1,7 +1,7 @@
 {
   "repo": "hanami/hanami-view",
   "workflow": "RuboCop",
-  "status": "failure",
-  "url": "https://github.com/hanami/hanami-view/actions/runs/24788322372",
-  "timestamp": "2026-04-22T15:56:11Z"
+  "status": "success",
+  "url": "https://github.com/hanami/hanami-view/actions/runs/24821749911",
+  "timestamp": "2026-04-23T07:07:06Z"
 }
