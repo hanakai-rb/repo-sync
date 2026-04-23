@@ -1,6 +1,6 @@
 # This file is synced from hanakai-rb/repo-sync
 
-{{ $ruby_versions := coll.Slice "4.0" "3.4" "3.3" "3.2" -}}
+{{ $ruby_versions := coll.Slice "4.0" "3.4" "3.3" -}}
 {{ if and .ci .ci.rubies -}}
   {{ range .ci.rubies -}}
     {{ $ruby_versions = $ruby_versions | coll.Append . -}}
