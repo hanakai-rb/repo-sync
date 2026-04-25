@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-monads",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-monads/actions/runs/24821745411",
-  "timestamp": "2026-04-23T07:07:23Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-monads/actions/runs/24930570278",
+  "timestamp": "2026-04-25T12:12:55Z"
 }
