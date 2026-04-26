@@ -2,6 +2,7 @@
 #
 # Defines groups of repositories and files to sync. See `.github/workflows/repo-sync.yml`.
 dry:
+  schema: templates/repo-sync-schema.json
   repos:
     - dry-rb/dry-auto_inject
     - dry-rb/dry-cli
@@ -49,7 +50,26 @@ dry:
     - [templates/gem/spec/support/warnings.rb, spec/support/warnings.rb]
     - [zizmor.yml, zizmor.yml]
 
+hanami-js:
+  schema: templates/repo-sync-schema-npm.json
+  repos:
+    - hanami/hanami-assets-js
+  files:
+    - [templates/gem/.github/FUNDING.yml, .github/FUNDING.yml]
+    - [templates/gem/.github/ISSUE_TEMPLATE/config.yml, .github/ISSUE_TEMPLATE/config.yml]
+    - [templates/gem/.github/SUPPORT.md, .github/SUPPORT.md]
+    - [templates/gem/.github/workflows/ci-lint.yml, .github/workflows/ci-lint.yml]
+    - [templates/gem/.github/workflows/pr-comments.yml, .github/workflows/pr-comments.yml]
+    - [templates/gem/.github/workflows/repo-sync-preview.yml, .github/workflows/repo-sync-preview.yml]
+    - [templates/gem/CODE_OF_CONDUCT.md, CODE_OF_CONDUCT.md]
+    - [templates/gem/LICENSE, LICENSE]
+    - [templates/npm/.github/ISSUE_TEMPLATE/bug-report.md, .github/ISSUE_TEMPLATE/bug-report.md]
+    - [templates/npm/CONTRIBUTING.md, CONTRIBUTING.md]
+    - [templates/npm/README.md.tpl, README.md]
+    - [zizmor.yml, zizmor.yml]
+
 hanami:
+  schema: templates/repo-sync-schema.json
   repos:
     - hanami/hanami
     - hanami/hanami-action
