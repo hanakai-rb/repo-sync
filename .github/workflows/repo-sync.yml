@@ -28,3 +28,12 @@ jobs:
     with:
       id: hanami
       group: hanami
+
+  sync_hanami_js:
+    permissions: *permissions
+    uses: ./.github/workflows/repo-sync-job.yml
+    secrets:
+      REPO_SYNC_TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
+    with:
+      id: hanami-js
+      group: hanami-js
