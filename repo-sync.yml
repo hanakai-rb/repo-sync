@@ -86,3 +86,28 @@ hanami:
     - [templates/gem/spec/support/rspec.rb, spec/support/rspec.rb]
     - [templates/gem/spec/support/warnings.rb, spec/support/warnings.rb]
     - [zizmor.yml, zizmor.yml]
+
+rom:
+  repos:
+    - rom-rb/rom-factory
+  files:
+    - [templates/gem/.github/FUNDING.yml, .github/FUNDING.yml]
+    - [templates/gem/.github/ISSUE_TEMPLATE/bug-report.md, .github/ISSUE_TEMPLATE/bug-report.md]
+    - [templates/gem/.github/ISSUE_TEMPLATE/config.yml, .github/ISSUE_TEMPLATE/config.yml]
+    - [templates/gem/.github/SUPPORT.md, .github/SUPPORT.md]
+    - [templates/gem/.github/workflows/ci.yml.tpl, .github/workflows/ci.yml]
+    - [templates/gem/.github/workflows/pr-comments.yml, .github/workflows/pr-comments.yml]
+    - [templates/gem/.github/workflows/repo-sync-preview.yml, .github/workflows/repo-sync-preview.yml]
+    - [templates/gem/.github/workflows/rubocop.yml, .github/workflows/rubocop.yml]
+    - [templates/gem/.github/workflows/ci-lint.yml, .github/workflows/ci-lint.yml]
+    - [templates/gem/.rspec, .rspec]
+    - [templates/gem/CODE_OF_CONDUCT.md, CODE_OF_CONDUCT.md]
+    - [templates/gem/CONTRIBUTING.md, CONTRIBUTING.md]
+    - [templates/gem/Gemfile.devtools, Gemfile.devtools]
+    - [templates/gem/gemspec.rb.tpl, "{{ .name.gem }}.gemspec"]
+    - [templates/gem/LICENSE, LICENSE]
+    - [templates/gem/README.md.tpl, README.md]
+    - [templates/gem/spec/support/coverage.rb, spec/support/coverage.rb]
+    - [templates/gem/spec/support/rspec.rb, spec/support/rspec.rb]
+    - [templates/gem/spec/support/warnings.rb, spec/support/warnings.rb]
+    - [zizmor.yml, zizmor.yml]
