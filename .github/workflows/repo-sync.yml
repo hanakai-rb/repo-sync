@@ -37,3 +37,12 @@ jobs:
     with:
       id: hanami-js
       group: hanami-js
+
+  sync_rom:
+    permissions: *permissions
+    uses: ./.github/workflows/repo-sync-job.yml
+    secrets:
+      REPO_SYNC_TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
+    with:
+      id: rom
+      group: rom
