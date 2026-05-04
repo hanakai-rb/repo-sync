@@ -108,6 +108,7 @@ hanami:
     - [zizmor.yml, zizmor.yml]
 
 rom:
+  schema: templates/repo-sync-schema.json
   repos:
     - rom-rb/rom-factory
   files:
