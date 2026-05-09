@@ -78,6 +78,7 @@ hanami:
     - hanami/hanami-controller-stub
     - hanami/hanami-db
     - hanami/hanami-mailer
+    - hanami/hanami-minitest
     - hanami/hanami-reloader
     - hanami/hanami-router
     - hanami/hanami-rspec
