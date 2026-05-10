@@ -1,6 +1,6 @@
 {{ $gem_path := .name.gem | strings.ReplaceAll "-" "/" -}}
 {{ $default_files := coll.Slice "CHANGELOG.md" "LICENSE" "README.md" (printf "%s.gemspec" .name.gem) "lib/**/*" -}}
-{{ $file_globs := $default_files }}{{ range (.gemspec.files | default (coll.Slice)) }}{{ $file_globs = $file_globs | coll.Append . }}{{ end -}}
+{{ $file_globs := $default_files }}{{ range (.gemspec.additional_files | default (coll.Slice)) }}{{ $file_globs = $file_globs | coll.Append . }}{{ end -}}
 
 # frozen_string_literal: true
 
@@ -34,7 +34,8 @@ Gem::Specification.new do |spec|
   spec.metadata["source_code_uri"]   = "https://github.com/{{ $github_path }}"
   spec.metadata["bug_tracker_uri"]   = "https://github.com/{{ $github_path }}/issues"
   spec.metadata["funding_uri"]       = "https://github.com/sponsors/hanami"
-
+{{ range $key, $value := (.gemspec.metadata | default (coll.Dict)) }}  spec.metadata["{{ $key }}"] = "{{ $value }}"
+{{ end }}
   spec.required_ruby_version = "{{ .gemspec.required_ruby_version | default ">= 3.3" }}"
 {{ range (.gemspec.runtime_dependencies | default (coll.Slice)) }}
   spec.add_runtime_dependency "{{ join . "\", \"" }}"

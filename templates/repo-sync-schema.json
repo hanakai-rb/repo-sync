@@ -117,12 +117,19 @@
           },
           "description": "Runtime dependencies"
         },
-        "files": {
+        "additional_files": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Additional file patterns to include in the gem"
+          "description": "Additional file patterns to include in spec.files"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Additional gemspec metadata entries"
         }
       }
     }
