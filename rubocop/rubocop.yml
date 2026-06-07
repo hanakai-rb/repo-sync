@@ -32,6 +32,9 @@ Lint/AmbiguousBlockAssociation:
   Exclude:
     - "spec/**/*.rb"
 
+Layout/ArgumentAlignment:
+  EnforcedStyle: with_fixed_indentation
+
 Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
 
