@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-matcher",
   "workflow": "RuboCop",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-matcher/actions/runs/34514884291",
-  "timestamp": "2026-09-10T18:33:57Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-matcher/actions/runs/34545846425",
+  "timestamp": "2026-09-11T00:17:58Z"
 }
