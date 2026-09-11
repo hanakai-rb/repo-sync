@@ -1,7 +1,7 @@
 {
   "repo": "dry-rb/dry-transaction",
   "workflow": "RuboCop",
-  "status": "failure",
-  "url": "https://github.com/dry-rb/dry-transaction/actions/runs/34514936168",
-  "timestamp": "2026-09-10T18:33:47Z"
+  "status": "success",
+  "url": "https://github.com/dry-rb/dry-transaction/actions/runs/34545887851",
+  "timestamp": "2026-09-11T00:19:28Z"
 }
