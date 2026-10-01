@@ -3,7 +3,7 @@
 {{ $repo_name := .github_repo | default .name.gem -}}
 [actions]: https://github.com/{{ .github_org }}/{{ $repo_name }}/actions
 [chat]: https://discord.gg/naQApPAsZB
-[forum]: https://discourse.hanamirb.org
+[forum]: https://discourse.hanakai.org
 [rubygem]: https://rubygems.org/gems/{{ .name.gem }}
 
 # {{ .name.title | default .name.gem }} [![Gem Version](https://badge.fury.io/rb/{{ .name.gem }}.svg)][rubygem] [![CI Status](https://github.com/{{ .github_org }}/{{ $repo_name }}/workflows/CI/badge.svg)][actions]

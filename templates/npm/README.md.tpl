@@ -3,7 +3,7 @@
 {{ $repo_name := .github_repo | default .name.title -}}
 [actions]: https://github.com/{{ .github_org }}/{{ $repo_name }}/actions
 [chat]: https://discord.gg/naQApPAsZB
-[forum]: https://discourse.hanamirb.org
+[forum]: https://discourse.hanakai.org
 [npm]: https://www.npmjs.com/package/{{ .name.package }}
 
 # {{ .name.title }} [![npm Version](https://img.shields.io/npm/v/{{ .name.package }}.svg)][npm] [![CI Status](https://github.com/{{ .github_org }}/{{ $repo_name }}/workflows/CI/badge.svg)][actions]
