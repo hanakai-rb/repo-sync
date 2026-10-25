@@ -128,7 +128,7 @@ jobs:
         run: npm install
       {{ end -}}
       - name: Set up Ruby
-        uses: ruby/setup-ruby@0cb964fd540e0a24c900370abf38a33466142735 # zizmor: ignore[cache-poisoning]
+        uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # zizmor: ignore[cache-poisoning]
         with:
           ruby-version: {{ print "${{" }} matrix.ruby }}
           bundler-cache: true
