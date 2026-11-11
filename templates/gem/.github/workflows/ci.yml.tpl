@@ -1,11 +1,16 @@
 # This file is synced from hanakai-rb/repo-sync
 
 {{ $ruby_versions := coll.Slice "4.0" "3.4" "3.3" -}}
+{{ $extra_rubies := coll.Slice -}}
 {{ if and .ci .ci.rubies -}}
   {{ range .ci.rubies -}}
     {{ $ruby_versions = $ruby_versions | coll.Append . -}}
+    {{ $extra_rubies = $extra_rubies | coll.Append . -}}
   {{ end -}}
 {{ end -}}
+{{/* Extra rubies are often exact patch versions (e.g. 3.3.0), which setup-ruby only provides
+     prebuilt for older runner images. Run them on a pinned image rather than ubuntu-latest. */ -}}
+{{ $extra_rubies_runner := "ubuntu-24.04" -}}
 {{ $default_ruby := index $ruby_versions 0 -}}
 {{/* JRuby is required by default, optional only when ci.jruby is explicitly false */ -}}
 {{ $jruby_optional := false -}}
@@ -49,7 +54,7 @@ permissions:
 jobs:
   tests:
     name: Tests (Ruby {{ print "${{" }} matrix.ruby }}{{ if $has_matrix }}{{ range $key, $values := $matrix_dimensions }}, {{ strings.Title $key }} {{ print "${{" }} matrix.{{ $key }} }}{{ end }}{{ end }})
-    runs-on: ubuntu-latest
+    runs-on: {{ if $extra_rubies }}{{ print "${{" }} matrix.runner || 'ubuntu-latest' }}{{ else }}ubuntu-latest{{ end }}
     continue-on-error: {{ print "${{" }} matrix.optional || false }}
     strategy:
       fail-fast: false
@@ -67,6 +72,10 @@ jobs:
         {{- end }}
         {{- end }}
         include:
+          {{- range $extra_rubies }}
+          - ruby: "{{ . }}"
+            runner: "{{ $extra_rubies_runner }}"
+          {{- end }}
           {{- if $has_matrix }}
           {{/* Repos WITH matrix dimensions */ -}}
           {{/* Coverage on one job only: default ruby + first value of each dimension */ -}}
