@@ -1,7 +1,7 @@
 {
   "repo": "hanami/hanami-reloader",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/hanami/hanami-reloader/actions/runs/40150387235",
-  "timestamp": "2026-10-25T01:24:35Z"
+  "status": "success",
+  "url": "https://github.com/hanami/hanami-reloader/actions/runs/43407824182",
+  "timestamp": "2026-11-13T10:20:01Z"
 }
