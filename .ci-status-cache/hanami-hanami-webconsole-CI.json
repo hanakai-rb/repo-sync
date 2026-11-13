@@ -1,7 +1,7 @@
 {
   "repo": "hanami/hanami-webconsole",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/hanami/hanami-webconsole/actions/runs/40150408596",
-  "timestamp": "2026-10-25T01:24:39Z"
+  "status": "success",
+  "url": "https://github.com/hanami/hanami-webconsole/actions/runs/43407872213",
+  "timestamp": "2026-11-13T10:20:52Z"
 }
