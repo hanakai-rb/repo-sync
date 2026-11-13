@@ -1,7 +1,7 @@
 {
   "repo": "hanami/hanami-minitest",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/hanami/hanami-minitest/actions/runs/40150382627",
-  "timestamp": "2026-10-25T01:24:38Z"
+  "status": "success",
+  "url": "https://github.com/hanami/hanami-minitest/actions/runs/43407814572",
+  "timestamp": "2026-11-13T10:19:01Z"
 }
