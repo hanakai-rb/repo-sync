@@ -1,7 +1,7 @@
 {
   "repo": "hanami/hanami-rspec",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/hanami/hanami-rspec/actions/runs/40150395407",
-  "timestamp": "2026-10-25T01:24:55Z"
+  "status": "success",
+  "url": "https://github.com/hanami/hanami-rspec/actions/runs/43407841616",
+  "timestamp": "2026-11-13T10:20:14Z"
 }
