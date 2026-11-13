@@ -1,7 +1,7 @@
 {
   "repo": "hanami/hanami-router",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/hanami/hanami-router/actions/runs/40150391678",
-  "timestamp": "2026-10-25T01:25:06Z"
+  "status": "success",
+  "url": "https://github.com/hanami/hanami-router/actions/runs/43407834143",
+  "timestamp": "2026-11-13T10:21:21Z"
 }
