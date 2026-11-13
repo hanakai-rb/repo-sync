@@ -1,7 +1,7 @@
 {
   "repo": "hanami/hanami-action",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/hanami/hanami-action/actions/runs/40150358736",
-  "timestamp": "2026-10-25T01:23:36Z"
+  "status": "success",
+  "url": "https://github.com/hanami/hanami-action/actions/runs/43407757914",
+  "timestamp": "2026-11-13T10:19:46Z"
 }
