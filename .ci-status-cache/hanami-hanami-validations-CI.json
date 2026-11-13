@@ -1,7 +1,7 @@
 {
   "repo": "hanami/hanami-validations",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/hanami/hanami-validations/actions/runs/40150404146",
-  "timestamp": "2026-10-25T01:24:47Z"
+  "status": "success",
+  "url": "https://github.com/hanami/hanami-validations/actions/runs/43407863707",
+  "timestamp": "2026-11-13T10:20:25Z"
 }
