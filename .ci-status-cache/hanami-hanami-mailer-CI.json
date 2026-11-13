@@ -1,7 +1,7 @@
 {
   "repo": "hanami/hanami-mailer",
   "workflow": "CI",
-  "status": "failure",
-  "url": "https://github.com/hanami/hanami-mailer/actions/runs/40150378405",
-  "timestamp": "2026-10-25T01:23:38Z"
+  "status": "success",
+  "url": "https://github.com/hanami/hanami-mailer/actions/runs/43407805482",
+  "timestamp": "2026-11-13T10:19:35Z"
 }
