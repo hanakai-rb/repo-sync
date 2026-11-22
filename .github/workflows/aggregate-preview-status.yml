@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           persist-credentials: true
 
@@ -103,7 +103,7 @@ jobs:
 
       - name: Aggregate statuses
         id: aggregate
-        uses: actions/github-script@450193c5abd4cdb17ba9f3ffcfe8f635c4bb6c2a
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
         with:
           script: |
             const fs = require("fs");
@@ -172,7 +172,7 @@ jobs:
 
       - name: Comment PR
         if: steps.aggregate.outputs.message != ''
-        uses: thollander/actions-comment-pull-request@e4a76dd2b0a3c2027c3fd84147a67c22ee4c90fa
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b
         with:
           message: ${{ steps.aggregate.outputs.message }}
           pr-number: ${{ steps.aggregate.outputs.pr_number }}

@@ -123,7 +123,7 @@ jobs:
     {{- end }}
     steps:
       - name: Checkout
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           persist-credentials: false
       - name: Install package dependencies
@@ -181,7 +181,7 @@ jobs:
     permissions:
       actions: write
     steps:
-      - uses: liskin/gh-workflow-keepalive@7a9194bad497f0b993708eeaf10fc0a2d726eb71
+      - uses: liskin/gh-workflow-keepalive@f72ff1a1336129f29bf0166c0fd0ca6cf1bcb38c
   {{- if $use_release_machine }}
 
   release:
@@ -190,7 +190,7 @@ jobs:
     needs: tests
     steps:
       - name: Trigger release workflow
-        uses: actions/github-script@450193c5abd4cdb17ba9f3ffcfe8f635c4bb6c2a
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
         with:
           github-token: {{ print "${{" }} secrets.RELEASE_MACHINE_DISPATCH_TOKEN }}
           script: |
