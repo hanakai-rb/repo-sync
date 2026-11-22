@@ -1,0 +1,20 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests", "schedule:weekly"],
+  "enabledManagers": ["github-actions"],
+  "minimumReleaseAge": "7 days",
+  "github-actions": {
+    "managerFilePatterns": ["/(^|/)\\.github/workflows/.+\\.ya?ml\\.tpl$/"]
+  },
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions"
+    },
+    {
+      "description": "Our own actions are deliberately referenced by branch (see zizmor.yml)",
+      "matchPackageNames": ["hanakai-rb/**"],
+      "enabled": false
+    }
+  ]
+}
