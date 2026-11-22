@@ -22,7 +22,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - name: Load config
@@ -63,7 +63,7 @@ jobs:
           TOKEN: ${{ secrets.REPO_SYNC_TOKEN }}
       - name: Comment
         if: github.event.pull_request.number
-        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1
         with:
           message: ${{ steps.sync.outputs.SYNC_SUMMARY || '' }}
           pr-number: ${{ github.event.pull_request.number }}

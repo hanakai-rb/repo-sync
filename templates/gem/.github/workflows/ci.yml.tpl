@@ -123,21 +123,21 @@ jobs:
     {{- end }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
       - name: Install package dependencies
         run: "[ -e $APT_DEPS ] || sudo apt-get install -y --no-install-recommends $APT_DEPS"
       {{ if and .ci .ci.node -}}
       - name: Set up Node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # zizmor: ignore[cache-poisoning]
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0 # zizmor: ignore[cache-poisoning]
         with:
           node-version: 20.x
       - name: Install dependencies
         run: npm install
       {{ end -}}
       - name: Set up Ruby
-        uses: ruby/setup-ruby@20eb24b0d509e2b9ed9b6d42ddfeb992915e0564 # zizmor: ignore[cache-poisoning]
+        uses: ruby/setup-ruby@20eb24b0d509e2b9ed9b6d42ddfeb992915e0564 # v1.341.0 # zizmor: ignore[cache-poisoning]
         with:
           ruby-version: {{ print "${{" }} matrix.ruby }}
           bundler-cache: true
@@ -181,7 +181,7 @@ jobs:
     permissions:
       actions: write
     steps:
-      - uses: liskin/gh-workflow-keepalive@f72ff1a1336129f29bf0166c0fd0ca6cf1bcb38c
+      - uses: liskin/gh-workflow-keepalive@f72ff1a1336129f29bf0166c0fd0ca6cf1bcb38c # v1.2.1
   {{- if $use_release_machine }}
 
   release:
@@ -190,7 +190,7 @@ jobs:
     needs: tests
     steps:
       - name: Trigger release workflow
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         with:
           github-token: {{ print "${{" }} secrets.RELEASE_MACHINE_DISPATCH_TOKEN }}
           script: |
